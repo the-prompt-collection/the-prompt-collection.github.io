@@ -1,0 +1,134 @@
+---
+---
+@import "reset"; // Or normalize.css if you prefer
+
+// Variables
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$text-color: #333;
+$background-color: #f8f9fa;
+$font-family: sans-serif;
+
+body {
+    font-family: $font-family;
+    color: $text-color;
+    background-color: $background-color;
+    margin: 0;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    h1 {
+        margin: 0;
+        a {
+            color: $primary-color;
+            text-decoration: none;
+        }
+    }
+    nav {
+        a {
+            margin-left: 20px;
+            color: $secondary-color;
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+main {
+    padding: 20px 0;
+}
+
+footer {
+    background-color: #fff;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+    text-align: center;
+    color: $secondary-color;
+    a {
+        color: $primary-color;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// Search Page Specific Styles
+#search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#search-results {
+    .prompt-card {
+        background-color: #fff;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 15px;
+        h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .category {
+            color: $secondary-color;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .content {
+            margin-bottom: 15px;
+            p {
+                margin-top: 0;
+            }
+        }
+        .copy-button {
+            background-color: $primary-color;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            &:hover {
+                background-color: darken($primary-color, 10%);
+            }
+        }
+    }
+}
+
+// Prompt Page Specific Styles (if using prompt.html)
+.prompt-page {
+    h1 {
+        margin-bottom: 10px;
+    }
+    .category {
+        color: $secondary-color;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+    }
+    .content {
+        // Style the prompt content further if needed
+    }
+    .copy-button {
+        // Style the copy button similarly to the search results page
+    }
+}
