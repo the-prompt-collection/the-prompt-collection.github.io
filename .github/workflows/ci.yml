@@ -16,6 +16,8 @@ jobs:
         with:
           ruby-version: '3.3.6'
           bundler-cache: true # Improves workflow speed by caching bundle dependencies
+      - name: Clean Build Output
+        run: rm -rf _site
 
       - name: Install Dependencies
         run: bundle install
