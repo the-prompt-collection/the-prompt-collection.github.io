@@ -11,19 +11,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
+      - name: Set up Ruby and Dependencies
+        uses: ruby/setup-ruby@v1
         with:
-          python-version: '3.x'
+          ruby-version: '3.x' # Or your preferred Ruby version
+          bundler-cache: true # Improves workflow speed by caching bundle dependencies
+
+      - name: Install Dependencies
+        run: bundle install
 
       - name: Generate Prompt Index
         run: python scripts/generate_index.py
-
-      - name: Set up Ruby and Jekyll
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '3.x'
-          bundler-cache: true
 
       - name: Build with Jekyll
         run: bundle exec jekyll build --destination ./_site
