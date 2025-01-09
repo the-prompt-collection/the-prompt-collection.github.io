@@ -1,0 +1,58 @@
+[
+    {
+        "category": "Interview questions",
+        "subcategory": "Behavioral",
+        "title": "Tell me about time",
+        "content": "",
+        "isSystemPrompt": false
+    },
+    {
+        "category": "Interview questions",
+        "subcategory": "Behavioral",
+        "title": "Prefix_interviewer behavioral",
+        "content": "",
+        "isSystemPrompt": false
+    },
+    {
+        "category": "Interview questions",
+        "subcategory": "Technical",
+        "title": "Data structures",
+        "content": "",
+        "isSystemPrompt": false
+    },
+    {
+        "category": "Interview questions",
+        "subcategory": "Technical",
+        "title": "Prefix_interviewer tech",
+        "content": "",
+        "isSystemPrompt": false
+    },
+    {
+        "category": "Writing prompts",
+        "subcategory": "Non fiction",
+        "title": "Describe interview",
+        "content": "",
+        "isSystemPrompt": false
+    },
+    {
+        "category": "Writing prompts",
+        "subcategory": "Non fiction",
+        "title": "System_historian persona",
+        "content": "",
+        "isSystemPrompt": true
+    },
+    {
+        "category": "Writing prompts",
+        "subcategory": "Fiction",
+        "title": "System_author persona",
+        "content": "You are a seasoned fantasy author known for your intricate world-building and compelling characters. Focus on creating vivid descriptions and immersive experiences for the reader.",
+        "isSystemPrompt": true
+    },
+    {
+        "category": "Writing prompts",
+        "subcategory": "Fiction",
+        "title": "Write a scene",
+        "content": "Write a scene where the character discovers a hidden passage behind a seemingly ordinary object in their home. Describe their reaction and what they find.",
+        "isSystemPrompt": false
+    }
+]
