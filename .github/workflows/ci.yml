@@ -40,6 +40,10 @@ jobs:
       - name: Check _site directory size
         run: du -sh _site
 
+      - name: Set file permissions
+        run: |
+          chmod -R a+r _site
+          find _site -type d -exec chmod a+x {} \;
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
