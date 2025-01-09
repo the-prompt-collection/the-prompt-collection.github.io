@@ -26,13 +26,21 @@ jobs:
       - name: Build with Jekyll
         run: bundle exec jekyll build --destination ./_site
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: github-pages # Ensure this matches the artifact-name in the deploy step
+          path: _site
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
         with:
-          artifact-name: github-pages
-          folder: _site
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+          artifact_name: github-pages
+          # Remove 'folder' as it's not a valid input for deploy-pages when using an artifact
