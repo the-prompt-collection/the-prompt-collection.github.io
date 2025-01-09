@@ -45,7 +45,7 @@ jobs:
           chmod -R a+r _site
           find _site -type d -exec chmod a+x {} \;
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: _site
@@ -60,6 +60,6 @@ jobs:
       name: github-pages
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages
