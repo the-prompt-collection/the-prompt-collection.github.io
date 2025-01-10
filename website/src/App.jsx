@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import debounce from 'lodash.debounce';
-import { FaTimes, FaCopy, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaCopy, FaCheck, FaPlus } from 'react-icons/fa';
 import prompts from './prompts/prompts.json';
 import references from './references.json'; // Import the references file
 import TagFilter from './components/TagFilter';
@@ -31,6 +31,23 @@ const App = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const [referencesData, setReferencesData] = useState([]); // State for references data
+  const [customTools, setCustomTools] = useState([]); // State for custom tools
+  const [showCustomToolForm, setShowCustomToolForm] = useState(false); // State to toggle the form
+  const [toolName, setToolName] = useState(''); // State for tool name input
+  const [toolUrl, setToolUrl] = useState(''); // State for tool URL input
+
+  // Load custom tools from localStorage on initial render
+  useEffect(() => {
+    console.log('Loading custom tools from localStorage');
+    const storedTools = JSON.parse(localStorage.getItem('customTools')) || [];
+    setCustomTools(storedTools);
+  }, []);
+
+  // Save custom tools to localStorage whenever they change
+  useEffect(() => {
+    console.log('Saving custom tools to localStorage', customTools);
+    localStorage.setItem('customTools', JSON.stringify(customTools));
+  }, [customTools]);
 
   // Extract all unique tags from prompts
   const allTags = [...new Set(prompts.flatMap((prompt) => prompt.tags || []))];
@@ -147,7 +164,13 @@ const App = () => {
         url = 'https://www.perplexity.ai/';
         break;
       default:
-        return;
+        // Check if the website is a custom tool
+        const customTool = customTools.find((tool) => tool.name === website);
+        if (customTool) {
+          url = customTool.url;
+        } else {
+          return;
+        }
     }
 
     window.open(url, '_blank');
@@ -181,6 +204,18 @@ const App = () => {
 
     fetchAllReferences();
   }, []);
+
+  // Handle adding a custom tool
+  const handleAddCustomTool = (e) => {
+    e.preventDefault();
+    if (toolName && toolUrl) {
+      const newTool = { name: toolName, url: toolUrl };
+      setCustomTools((prev) => [...prev, newTool]);
+      setToolName('');
+      setToolUrl('');
+      setShowCustomToolForm(false);
+    }
+  };
 
   // Render a single prompt item
   const PromptItem = ({ index, style }) => {
@@ -344,7 +379,9 @@ const App = () => {
                   className="px-4 py-2 border border-gray-300 rounded"
                   onChange={(e) => {
                     const selectedWebsite = e.target.value;
-                    if (selectedWebsite && selectedPrompt) {
+                    if (selectedWebsite === 'add-custom-tool') {
+                      setShowCustomToolForm(true);
+                    } else if (selectedWebsite && selectedPrompt) {
                       handleStartConversation(selectedWebsite, selectedPrompt.content);
                     }
                   }}
@@ -358,6 +395,20 @@ const App = () => {
                       </div>
                     </option>
                   ))}
+                  {customTools.map((tool) => (
+                    <option key={tool.name} value={tool.name}>
+                      <div className="flex items-center">
+                        <FaPlus className="w-6 h-6 mr-2" />
+                        {tool.name}
+                      </div>
+                    </option>
+                  ))}
+                  <option value="add-custom-tool">
+                    <div className="flex items-center">
+                      <FaPlus className="w-6 h-6 mr-2" />
+                      Add Custom Tool
+                    </div>
+                  </option>
                 </select>
 
                 <button
@@ -370,6 +421,36 @@ const App = () => {
                   {isCopied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
+
+              {/* Add Custom Tool Form */}
+              {showCustomToolForm && (
+                <form onSubmit={handleAddCustomTool} className="mt-4">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Tool Name"
+                      className="p-2 border border-gray-300 rounded flex-1"
+                      value={toolName}
+                      onChange={(e) => setToolName(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="url"
+                      placeholder="Tool URL"
+                      className="p-2 border border-gray-300 rounded flex-1"
+                      value={toolUrl}
+                      onChange={(e) => setToolUrl(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         )}
