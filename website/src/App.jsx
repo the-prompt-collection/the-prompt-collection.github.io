@@ -4,8 +4,11 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import debounce from 'lodash.debounce';
 import { FaTimes, FaCopy, FaCheck } from 'react-icons/fa';
 import prompts from './prompts/prompts.json';
+import references from './references.json'; // Import the references file
 import TagFilter from './components/TagFilter';
 import Footer from './components/Footer';
+import axios from 'axios';
+import { load } from 'cheerio'; // Use named import for cheerio
 
 // Logos (you can replace these with actual image URLs or SVGs)
 const logos = {
@@ -26,7 +29,8 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [isCopied, setIsCopied] = useState(false);
-  const [showAllTags, setShowAllTags] = useState(false); // State to control tag visibility
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [referencesData, setReferencesData] = useState([]); // State for references data
 
   // Extract all unique tags from prompts
   const allTags = [...new Set(prompts.flatMap((prompt) => prompt.tags || []))];
@@ -149,6 +153,35 @@ const App = () => {
     window.open(url, '_blank');
   };
 
+  // Fetch reference data using a CORS proxy
+  useEffect(() => {
+    const fetchAllReferences = async () => {
+      const data = await Promise.all(
+        references.map(async (url) => {
+          try {
+            // Use a CORS proxy to bypass CORS restrictions
+            const proxyUrl = `https://corsproxy.io/${url}`;
+            const response = await axios.get(proxyUrl);
+            const $ = load(response.data); // Use the named import `load`
+
+            const title = $('title').text() || 'No Title';
+            const description =
+              $('meta[name="description"]').attr('content') ||
+              $('p').first().text().substring(0, 100) + '...';
+
+            return { title, description, url };
+          } catch (error) {
+            console.error(`Error fetching data from ${url}:`, error);
+            return { title: 'Error', description: 'Unable to fetch data', url };
+          }
+        })
+      );
+      setReferencesData(data);
+    };
+
+    fetchAllReferences();
+  }, []);
+
   // Render a single prompt item
   const PromptItem = ({ index, style }) => {
     const prompt = visiblePrompts[index];
@@ -166,9 +199,9 @@ const App = () => {
         </h3>
         <p className="mt-2 text-sm">{prompt.content.substring(0, 100)}...</p>
         <div className="mt-2 flex flex-wrap gap-2">
-          {(prompt.tags || []).map((tag) => (
+          {(prompt.tags || []).map((tag, tagIndex) => (
             <span
-              key={tag}
+              key={`${tag}-${tagIndex}`}
               className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
             >
               {tag} ({tagCounts[tag]})
@@ -245,6 +278,26 @@ const App = () => {
           </List>
         </InfiniteScroll>
 
+        {/* References Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Learn More About Prompt Engineering</h2>
+          <div className="space-y-4">
+            {referencesData.map((ref, index) => (
+              <div key={index} className="p-4 border border-gray-200 rounded">
+                <a
+                  href={ref.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <h3 className="font-bold">{ref.title}</h3>
+                </a>
+                <p className="text-sm text-gray-600">{ref.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Selected Prompt Modal */}
         {selectedPrompt && (
           <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center p-4">
@@ -262,9 +315,9 @@ const App = () => {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-4">
-                {(selectedPrompt.tags || []).map((tag) => (
+                {(selectedPrompt.tags || []).map((tag, tagIndex) => (
                   <span
-                    key={tag}
+                    key={`${tag}-${tagIndex}`}
                     className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
                   >
                     {tag}
