@@ -31,6 +31,10 @@ function generatePromptData() {
         const tags = [];
         if (isSystemPrompt) {
           tags.push('system'); // Add 'system' tag only if it's a system prompt
+          // Extract additional tags from the file name
+          const fileNameWithoutPrefix = file.slice(systemPromptPrefix.length, -3); // Remove 'system_' and '.md'
+          const additionalTags = fileNameWithoutPrefix.split('_'); // Split by underscores
+          subcategories.push(...additionalTags); // Add extracted tags
         }
         tags.push(category); // Add category as a tag
         tags.push(...subcategories); // Add all subcategories as tags

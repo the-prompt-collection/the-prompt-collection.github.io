@@ -7,6 +7,15 @@ import prompts from './prompts/prompts.json';
 import TagFilter from './components/TagFilter';
 import Footer from './components/Footer';
 
+// Logos (you can replace these with actual image URLs or SVGs)
+const logos = {
+  Gemini: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Google_Gemini_logo.svg',
+  ChatGPT: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
+  DeepSeek: 'https://example.com/deepseek-logo.svg', // Replace with actual logo URL
+  Grok: 'https://example.com/grok-logo.svg', // Replace with actual logo URL
+  Perplexity: 'https://example.com/perplexity-logo.svg', // Replace with actual logo URL
+};
+
 const PAGE_SIZE = 50; // Number of prompts to load at a time
 
 const App = () => {
@@ -17,18 +26,28 @@ const App = () => {
   const [page, setPage] = useState(1);
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [isCopied, setIsCopied] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false); // State to control tag visibility
 
   // Extract all unique tags from prompts
   const allTags = [...new Set(prompts.flatMap((prompt) => prompt.tags || []))];
-
-  // Calculate the total number of prompts
-  const totalPrompts = prompts.length;
 
   // Calculate the number of prompts for each tag
   const tagCounts = allTags.reduce((acc, tag) => {
     acc[tag] = prompts.filter((prompt) => (prompt.tags || []).includes(tag)).length;
     return acc;
   }, {});
+
+  // Sort tags by popularity (number of prompts)
+  const sortedTags = allTags.sort((a, b) => tagCounts[b] - tagCounts[a]);
+
+  // Number of tags to show initially
+  const INITIAL_TAGS_TO_SHOW = 5;
+
+  // Slice the sorted tags array based on whether "Show More" is clicked
+  const visibleTags = showAllTags ? sortedTags : sortedTags.slice(0, INITIAL_TAGS_TO_SHOW);
+
+  // Calculate the total number of prompts
+  const totalPrompts = prompts.length;
 
   // Filter prompts based on search query and selected tags
   const filterPrompts = useCallback(() => {
@@ -97,6 +116,39 @@ const App = () => {
     });
   };
 
+  // Handle starting a conversation with a selected website
+  const handleStartConversation = (website, promptContent) => {
+    // Copy the system prompt to the clipboard
+    navigator.clipboard.writeText(promptContent).then(() => {
+      setIsCopied(true); // Set copied state to true
+      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+    });
+
+    // Redirect to the selected platform
+    let url = '';
+    switch (website) {
+      case 'Gemini':
+        url = 'https://gemini.google.com/app';
+        break;
+      case 'ChatGPT':
+        url = 'https://chatgpt.com/';
+        break;
+      case 'DeepSeek':
+        url = 'https://chat.deepseek.com';
+        break;
+      case 'Grok':
+        url = 'https://x.com/i/grok';
+        break;
+      case 'Perplexity':
+        url = 'https://www.perplexity.ai/';
+        break;
+      default:
+        return;
+    }
+
+    window.open(url, '_blank');
+  };
+
   // Render a single prompt item
   const PromptItem = ({ index, style }) => {
     const prompt = visiblePrompts[index];
@@ -149,12 +201,31 @@ const App = () => {
         />
 
         {/* Tag Filter */}
-        <TagFilter
-          tags={allTags}
-          selectedTags={selectedTags}
-          onTagToggle={handleTagToggle}
-          tagCounts={tagCounts}
-        />
+        <div className="mb-4">
+          <div className="flex flex-wrap gap-2">
+            {visibleTags.map((tag) => (
+              <button
+                key={tag}
+                className={`px-3 py-1 rounded-full text-sm ${
+                  selectedTags.includes(tag)
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => handleTagToggle(tag)}
+              >
+                {tag} ({tagCounts[tag]})
+              </button>
+            ))}
+          </div>
+          {sortedTags.length > INITIAL_TAGS_TO_SHOW && (
+            <button
+              className="text-blue-500 hover:text-blue-700 text-sm mt-2"
+              onClick={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? 'Show Less' : 'Show More'}
+            </button>
+          )}
+        </div>
 
         {/* Infinite Scroll List */}
         <InfiniteScroll
@@ -203,19 +274,39 @@ const App = () => {
 
               {/* Prompt Content */}
               <div className="flex-1 overflow-y-auto">
-                  <textarea
-                    className="w-full p-2 border border-gray-300 rounded"
-                    value={selectedPrompt.content}
-                    onChange={(e) => {
-                      // Update the content in your state or context
-                      setSelectedPrompt({ ...selectedPrompt, content: e.target.value });
-                    }}
-                    rows={15} // Set the number of visible lines to 15
-                  />
-                </div>
+                <textarea
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={selectedPrompt.content}
+                  onChange={(e) => {
+                    // Update the content in your state or context
+                    setSelectedPrompt({ ...selectedPrompt, content: e.target.value });
+                  }}
+                  rows={15} // Set the number of visible lines to 15
+                />
+              </div>
 
               {/* Modal Footer */}
               <div className="flex justify-end space-x-2 mt-4">
+                <select
+                  className="px-4 py-2 border border-gray-300 rounded"
+                  onChange={(e) => {
+                    const selectedWebsite = e.target.value;
+                    if (selectedWebsite && selectedPrompt) {
+                      handleStartConversation(selectedWebsite, selectedPrompt.content);
+                    }
+                  }}
+                >
+                  <option value="">Start a conversation with...</option>
+                  {Object.entries(logos).map(([name, logo]) => (
+                    <option key={name} value={name}>
+                      <div className="flex items-center">
+                        <img src={logo} alt={name} className="w-6 h-6 mr-2" />
+                        {name}
+                      </div>
+                    </option>
+                  ))}
+                </select>
+
                 <button
                   className={`px-4 py-2 ${
                     isCopied ? 'bg-green-500' : 'bg-blue-500'
@@ -227,6 +318,13 @@ const App = () => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Notification for Copied Prompt */}
+        {isCopied && (
+          <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            Prompt copied to clipboard! Paste it into the chat.
           </div>
         )}
       </div>
