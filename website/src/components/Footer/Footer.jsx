@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaGithub, FaTwitter, FaStar, FaCodeBranch } from 'react-icons/fa';
+import { FaGithub, FaTwitter, FaStar, FaCodeBranch, FaHashtag, FaRocket } from 'react-icons/fa';
 import { fetchRepoData } from '../../utils/github';
 
 const Footer = () => {
@@ -24,7 +24,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* GitHub Project Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">GitHub Project</h3>
+            <h3 className="text-lg font-semibold mb-4">Project</h3>
             {repoData && (
               <div className="space-y-2">
                 <a
@@ -34,7 +34,7 @@ const Footer = () => {
                   className="flex items-center hover:text-blue-500"
                 >
                   <FaGithub className="mr-2" />
-                  {repoData.full_name}
+                  GitHub
                 </a>
                 <div className="flex items-center space-x-4">
                   <span className="flex items-center">
@@ -45,6 +45,25 @@ const Footer = () => {
                     <FaCodeBranch className="mr-1" />
                     {repoData.forks_count}
                   </span>
+                  {repoData && (
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <FaRocket />
+                        <span className="text-sm text-gray-600">
+                          {repoData.deployJobUrl && (
+                            <a
+                              href={repoData.deployJobUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center text-sm text-blue-500 hover:underline"
+                            >
+                            Version: {repoData.lastCommitHash.substring(0, 7)}
+                            </a>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -52,17 +71,9 @@ const Footer = () => {
 
           {/* Social Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Social Links</h3>
+            <h3 className="text-lg font-semibold mb-4">Social</h3>
             <div className="space-y-2">
-              <a
-                href="https://github.com/the-prompt-collection"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center  hover:text-blue-500"
-              >
-                <FaGithub className="mr-2" />
-                GitHub
-              </a>
+
               <a
                 href="https://twitter.com/the-prompt-collection"
                 target="_blank"
@@ -75,10 +86,10 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* License */}
+          {/* License and Version */}
           <div>
             <h3 className="text-lg font-semibold mb-4">License</h3>
-            <p className="">
+            <p className="mb-4">
               This project is licensed under the{' '}
               <a
                 href="https://opensource.org/licenses/MIT"
