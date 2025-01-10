@@ -67,7 +67,6 @@ const SelectedPromptModal = ({
           <textarea
             className="w-full p-2 border border-gray-300 rounded"
             value={selectedPrompt.content}
-            readOnly
             rows={15}
           />
         </div>
