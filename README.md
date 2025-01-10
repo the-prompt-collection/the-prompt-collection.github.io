@@ -7,11 +7,12 @@ This project is hosted at [the-prompt-collection.github.io](https://the-prompt-c
 ---
 
 ## Features
-- **Organized Structure**: Prompts are categorized into logical groups (e.g., Writing, Interviews) and subcategories (e.g., Fiction, Non-Fiction) for easy navigation.
+- **Organized Structure**: Prompts are categorized and tagged into logical groups (e.g., Writing, Interviews) and subcategories (e.g., Fiction, Non-Fiction) for easy navigation.
 - **System Prompts**: Each category includes system prompts prefixed with `system_` to define personas and scenarios.
 - **Search Functionality**: Quickly find prompts by category, subcategory, or keywords.
-- **User-Friendly Interface**: A responsive, single-page application built with Vite and TailwindCSS for seamless use across devices.
-- **Scalable Design**: Optimized to handle large datasets (10,000+ prompts) with fast load times and smooth navigation.
+- **Custom Tools**: Users can define their own AI tools and integrate them seamlessly into the app.
+- **Quick Start**: Start conversations on popular AI platforms like ChatGPT, Gemini, DeepSeek, and more with a single click.
+- **Privacy**: There is no backend server. User information is stored locally in the browser cache.
 
 ---
 
@@ -23,18 +24,23 @@ This project is hosted at [the-prompt-collection.github.io](https://the-prompt-c
 2. **System Prompts**:
    - System prompts are prefixed with `system_` and provide context for generating responses.
    - Example: `system_fiction_author.md` defines a persona for a fictional author.
+   - Quickly use system prompts with selected AI tools or user-defined custom tools.
 
 3. **Modify and Copy**:
    - Open any prompt to view its content.
    - Modify the prompt directly on the website and copy the updated text using the "Copy" button.
 
-4. **Contribute**:
-   - Follow the guidelines below to add new prompts or system prompts to the repository.
+4. **Custom Tools**:
+   - Add, modify, or delete custom AI tools to integrate with the app.
+   - Use the dropdown menu to select a custom tool and start a conversation.
+
+5. **References Section**:
+   - Access external resources to learn more about prompt engineering.
 
 ---
 
 ## Contribution Guidelines
-We welcome contributions to the **Prompt Collection**! Here’s how you can help:
+We welcome contributions to **The Prompt Collection**! Here’s how you can help:
 
 1. **Add New Prompts**:
    - Create a new `.md` file in the appropriate category/subcategory folder.
@@ -55,18 +61,11 @@ We welcome contributions to the **Prompt Collection**! Here’s how you can help
 
 ## Attribution
 Many prompts in this collection have been copied and modified from the following sources:
-- [https://github.com/0xeb/TheBigPromptLibrary](TheBigPromptLibrary)
-- [https://sr.ht/~jamesponddotco/llm-prompts/](~jamesponddotco/llm-prompts)
-- [https://www.reddit.com/r/ChatGPTPromptGenius/](r/ChatGPTPromptGenius)
+- [TheBigPromptLibrary](https://github.com/0xeb/TheBigPromptLibrary)
+- [~jamesponddotco/llm-prompts](https://sr.ht/~jamesponddotco/llm-prompts/)
+- [r/ChatGPTPromptGenius](https://www.reddit.com/r/ChatGPTPromptGenius/)
 
 We are grateful to the creators of these prompts for their inspiration and original work. If you believe any content has been improperly attributed or used, please contact us, and we will address the issue promptly.
-
----
-
-## Technical Details
-- **Framework**: Built with [Vite](https://vitejs.dev/) for fast development and optimized performance.
-- **Styling**: Uses [TailwindCSS](https://tailwindcss.com/) for modern, responsive design.
-- **Deployment**: Hosted on GitHub Pages for easy access and maintenance.
 
 ---
 
@@ -76,7 +75,7 @@ This project is licensed under the [MIT License](LICENSE). Feel free to use, mod
 ---
 
 ## Contact
-For questions, suggestions, or collaboration opportunities, please open an issue on the [GitHub repository](https://github.com/the-prompt-collection/prompt-collection) or contact us at [email@example.com](mailto:email@example.com).
+For questions, suggestions, or collaboration opportunities, please open an issue on the [GitHub repository](https://github.com/the-prompt-collection/prompt-collection) or contact us at [contact.taco.fr@gmail.com](mailto:contact.taco.fr@gmail.com).
 
 ---
 
