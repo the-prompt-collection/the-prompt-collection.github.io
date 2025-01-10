@@ -57,6 +57,7 @@ We welcome contributions to the **Prompt Collection**! Here’s how you can help
 Many prompts in this collection have been copied and modified from the following sources:
 - [https://github.com/0xeb/TheBigPromptLibrary](TheBigPromptLibrary)
 - [https://sr.ht/~jamesponddotco/llm-prompts/](~jamesponddotco/llm-prompts)
+- [https://www.reddit.com/r/ChatGPTPromptGenius/](r/ChatGPTPromptGenius)
 
 We are grateful to the creators of these prompts for their inspiration and original work. If you believe any content has been improperly attributed or used, please contact us, and we will address the issue promptly.
 
