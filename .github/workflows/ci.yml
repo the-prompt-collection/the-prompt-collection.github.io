@@ -14,6 +14,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Navigate to website directory
+        run: cd website/
+
       - name: Install dependencies
         run: npm install
       - name: Build project
@@ -22,4 +25,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./website/dist
