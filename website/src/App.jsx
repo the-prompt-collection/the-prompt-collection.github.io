@@ -12,6 +12,7 @@ import references from './references.json';
 import axios from 'axios';
 import { load } from 'cheerio';
 import debounce from 'lodash.debounce';
+
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
   const [showAllTags, setShowAllTags] = useState(false);
   const [referencesData, setReferencesData] = useState([]);
   const [customTools, setCustomTools] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
@@ -58,6 +60,16 @@ const App = () => {
   // Calculate the total number of prompts
   const totalPrompts = prompts.length;
 
+  // Group prompts by category
+  const groupedPrompts = prompts.reduce((acc, prompt) => {
+    const category = prompt.category || 'Uncategorized';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(prompt);
+    return acc;
+  }, {});
+
   // Filter prompts based on search query and selected tags
   const filterPrompts = useCallback(() => {
     return prompts.filter((prompt) => {
@@ -82,7 +94,7 @@ const App = () => {
 
   // Load more prompts for infinite scroll
   const loadMorePrompts = () => {
-    const filtered = filterPrompts();
+    const filtered = selectedCategory ? groupedPrompts[selectedCategory] : filterPrompts();
     const nextPage = page + 1;
     const startIndex = (nextPage - 1) * PAGE_SIZE;
     const newPrompts = filtered.slice(startIndex, startIndex + PAGE_SIZE);
@@ -103,10 +115,27 @@ const App = () => {
   // Reset visible prompts when search or tags change
   useEffect(() => {
     const filtered = filterPrompts();
+    console.log(filtered);
     setVisiblePrompts(filtered.slice(0, PAGE_SIZE));
     setPage(1);
     setHasMore(filtered.length > PAGE_SIZE);
   }, [searchQuery, selectedTags, filterPrompts]);
+
+  // Handle category selection
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setVisiblePrompts(groupedPrompts[category].slice(0, PAGE_SIZE));
+    setPage(1);
+    setHasMore(groupedPrompts[category].length > PAGE_SIZE);
+  };
+
+  // Handle back to category view
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+    setVisiblePrompts(filterPrompts().slice(0, PAGE_SIZE));
+    setPage(1);
+    setHasMore(filterPrompts().length > PAGE_SIZE);
+  };
 
   // Toggle a tag in the selected tags list
   const handleTagToggle = (tag) => {
@@ -213,9 +242,12 @@ const App = () => {
     );
   };
 
+  // Determine whether to show the category list or filtered prompts
+  const showCategoryList = !searchQuery && selectedTags.length === 0 && !selectedCategory;
+
   return (
-    <div className="min-h-screen bg-gray-50"> {/* Light gray background */}
-      <div className="container mx-auto p-4"> {/* Centered container with padding */}
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-4">
         <Header totalPrompts={totalPrompts} />
         <SearchBar onSearch={handleSearch} />
         <TagFilter
@@ -232,6 +264,11 @@ const App = () => {
           hasMore={hasMore}
           onSelectPrompt={setSelectedPrompt}
           tagCounts={tagCounts}
+          selectedCategory={selectedCategory}
+          onCategoryClick={handleCategoryClick}
+          onBackToCategories={handleBackToCategories}
+          groupedPrompts={groupedPrompts}
+          showCategoryList={showCategoryList}
         />
         <ReferencesSection referencesData={referencesData} />
         {selectedPrompt && (
