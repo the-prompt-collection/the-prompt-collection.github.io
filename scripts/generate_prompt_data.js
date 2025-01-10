@@ -3,7 +3,7 @@ const path = require('path');
 
 const promptsDir = path.join(__dirname, '../prompts');
 const outputFilePath = path.join(__dirname, '../website/src/prompts/prompts.json');
-const systemPromptPrefix = 'prefix_';
+const systemPromptPrefix = 'system_';
 
 function generatePromptData() {
   const allPrompts = [];

@@ -14,9 +14,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Generate prompts file
+        run: node scripts/generate_prompt_data.js
       - name: Navigate to website directory
         run: cd website/
-
       - name: Install dependencies
         run: npm install
         working-directory: ./website

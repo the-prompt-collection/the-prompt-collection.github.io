@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaGithub, FaTwitter, FaLinkedin, FaStar, FaCodeBranch } from 'react-icons/fa';
+import { FaGithub, FaTwitter, FaStar, FaCodeBranch } from 'react-icons/fa';
 import { fetchRepoData } from '../utils/github';
 
 const Footer = () => {
