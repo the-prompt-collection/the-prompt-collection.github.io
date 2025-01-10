@@ -1,5 +1,0 @@
-title: The Prompt Collection
-description: A curated collection of prompts.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://the-prompt-collection.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-github_username:  the-prompt-collection # Replace with your username
