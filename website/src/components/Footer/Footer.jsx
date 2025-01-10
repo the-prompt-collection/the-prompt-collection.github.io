@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaGithub, FaTwitter, FaStar, FaCodeBranch } from 'react-icons/fa';
-import { fetchRepoData } from '../utils/github';
+import { fetchRepoData } from '../../utils/github';
 
 const Footer = () => {
   const [repoData, setRepoData] = useState(null);
