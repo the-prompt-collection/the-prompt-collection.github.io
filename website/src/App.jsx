@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import debounce from 'lodash.debounce';
-import { FaTimes, FaCopy, FaCheck, FaPlus } from 'react-icons/fa';
+import { FaTimes, FaCopy, FaCheck, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import prompts from './prompts/prompts.json';
 import references from './references.json'; // Import the references file
 import TagFilter from './components/TagFilter';
@@ -12,11 +12,11 @@ import { load } from 'cheerio'; // Use named import for cheerio
 
 // Logos (you can replace these with actual image URLs or SVGs)
 const logos = {
-  Gemini: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Google_Gemini_logo.svg',
-  ChatGPT: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
-  DeepSeek: 'https://example.com/deepseek-logo.svg', // Replace with actual logo URL
-  Grok: 'https://example.com/grok-logo.svg', // Replace with actual logo URL
-  Perplexity: 'https://example.com/perplexity-logo.svg', // Replace with actual logo URL
+  Gemini: 'https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-PNG-Cutout-thumb.png',
+  ChatGPT: 'https://upload.wikimedia.org/wikipedia/commons/1/13/ChatGPT-Logo.png',
+  DeepSeek: 'https://logowik.com/content/uploads/images/deepseek-ai4760.logowik.com.webp', // Replace with actual logo URL
+  Grok: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Logo_Grok_AI_%28xAI%29_2025.png', // Replace with actual logo URL
+  Perplexity: 'https://uxwing.com/wp-content/uploads/themes/uxwing/download/brands-and-social-media/perplexity-ai-icon.png', // Replace with actual logo URL
 };
 
 const PAGE_SIZE = 50; // Number of prompts to load at a time
@@ -35,6 +35,7 @@ const App = () => {
   const [showCustomToolForm, setShowCustomToolForm] = useState(false); // State to toggle the form
   const [toolName, setToolName] = useState(''); // State for tool name input
   const [toolUrl, setToolUrl] = useState(''); // State for tool URL input
+  const [editingTool, setEditingTool] = useState(null); // State to track which tool is being edited
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
@@ -217,6 +218,35 @@ const App = () => {
     }
   };
 
+  // Handle deleting a custom tool
+  const handleDeleteCustomTool = (toolName) => {
+    setCustomTools((prev) => prev.filter((tool) => tool.name !== toolName));
+  };
+
+  // Handle modifying a custom tool
+  const handleModifyCustomTool = (tool) => {
+    setEditingTool(tool);
+    setToolName(tool.name);
+    setToolUrl(tool.url);
+    setShowCustomToolForm(true);
+  };
+
+  // Handle updating a custom tool
+  const handleUpdateCustomTool = (e) => {
+    e.preventDefault();
+    if (toolName && toolUrl) {
+      setCustomTools((prev) =>
+        prev.map((tool) =>
+          tool.name === editingTool.name ? { name: toolName, url: toolUrl } : tool
+        )
+      );
+      setToolName('');
+      setToolUrl('');
+      setShowCustomToolForm(false);
+      setEditingTool(null);
+    }
+  };
+
   // Render a single prompt item
   const PromptItem = ({ index, style }) => {
     const prompt = visiblePrompts[index];
@@ -228,10 +258,7 @@ const App = () => {
         className="p-4 border border-gray-200 rounded cursor-pointer hover:border-blue-500 transition-all duration-200"
         onClick={() => setSelectedPrompt(prompt)}
       >
-        <h2 className="font-bold">{prompt.category || "Uncategorized"}</h2>
-        <h3 className="text-sm text-gray-600">
-          {prompt.subcategories?.join(', ') || "No Subcategories"}
-        </h3>
+        <h2 className="font-bold">{prompt.filename}</h2>
         <p className="mt-2 text-sm">{prompt.content.substring(0, 100)}...</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {(prompt.tags || []).map((tag, tagIndex) => (
@@ -389,26 +416,15 @@ const App = () => {
                   <option value="">Start a conversation with...</option>
                   {Object.entries(logos).map(([name, logo]) => (
                     <option key={name} value={name}>
-                      <div className="flex items-center">
-                        <img src={logo} alt={name} className="w-6 h-6 mr-2" />
-                        {name}
-                      </div>
+                      {name}
                     </option>
                   ))}
                   {customTools.map((tool) => (
                     <option key={tool.name} value={tool.name}>
-                      <div className="flex items-center">
-                        <FaPlus className="w-6 h-6 mr-2" />
-                        {tool.name}
-                      </div>
+                      {tool.name}
                     </option>
                   ))}
-                  <option value="add-custom-tool">
-                    <div className="flex items-center">
-                      <FaPlus className="w-6 h-6 mr-2" />
-                      Add Custom Tool
-                    </div>
-                  </option>
+                  <option value="add-custom-tool">Add Custom Tool</option>
                 </select>
 
                 <button
@@ -424,7 +440,7 @@ const App = () => {
 
               {/* Add Custom Tool Form */}
               {showCustomToolForm && (
-                <form onSubmit={handleAddCustomTool} className="mt-4">
+                <form onSubmit={editingTool ? handleUpdateCustomTool : handleAddCustomTool} className="mt-4">
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -446,11 +462,37 @@ const App = () => {
                       type="submit"
                       className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
-                      Add
+                      {editingTool ? 'Update' : 'Add'}
                     </button>
                   </div>
                 </form>
               )}
+
+              {/* Custom Tools List */}
+              <div className="mt-4">
+                <h3 className="text-lg font-bold">Custom Tools</h3>
+                <ul className="space-y-2">
+                  {customTools.map((tool, index) => (
+                    <li key={index} className="flex justify-between items-center p-2 border border-gray-200 rounded">
+                      <span>{tool.name}</span>
+                      <div className="flex gap-2">
+                        <button
+                          className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                          onClick={() => handleModifyCustomTool(tool)}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                          onClick={() => handleDeleteCustomTool(tool.name)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         )}
