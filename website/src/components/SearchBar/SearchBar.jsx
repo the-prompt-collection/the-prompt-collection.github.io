@@ -32,7 +32,7 @@ const SearchBar = ({ onSearch }) => {
       <input
         type="text"
         placeholder="Search by category, subcategory, or description..."
-        className="w-full p-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200 pr-10"
+        className="w-full p-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200 pr-10 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
         value={query}
         onChange={handleInputChange}
       />
@@ -40,7 +40,7 @@ const SearchBar = ({ onSearch }) => {
       {query && (
         <button
           onClick={handleClear}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,7 @@ const SearchBar = ({ onSearch }) => {
       {isLoading && (
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
           <svg
-            className="animate-spin h-5 w-5 text-gray-500"
+            className="animate-spin h-5 w-5 text-gray-500 dark:text-gray-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

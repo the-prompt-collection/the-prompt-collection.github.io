@@ -4,10 +4,49 @@
 
 /* Custom base styles */
 body {
-  padding: 20px;
   font-family: 'Inter', sans-serif; /* Use a modern sans-serif font */
   background-color: #f9fafb; /* Light gray background */
   color: #1f2937; /* Dark gray text for better readability */
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f2937; /* Dark background */
+    color: #f9fafb; /* Light text for better readability */
+  }
+
+  h1, h2, h3 {
+    color: #f9fafb; /* Light text for headings */
+  }
+
+  a {
+    color: #60a5fa; /* Lighter blue links for dark mode */
+  }
+
+  a:hover {
+    color: #3b82f6; /* Slightly darker blue on hover */
+  }
+
+  .card {
+    background-color: #374151; /* Darker background for cards */
+    border-color: #4b5563; /* Darker border for cards */
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1); /* Subtle shadow for dark mode */
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1); /* Slightly stronger shadow on hover */
+  }
+
+  input, textarea {
+    background-color: #374151; /* Darker background for inputs */
+    border-color: #4b5563; /* Darker border for inputs */
+    color: #f9fafb; /* Light text for inputs */
+  }
+
+  input:focus, textarea:focus {
+    border-color: #60a5fa; /* Lighter blue border on focus */
+  }
 }
 
 /* Custom container styles */
