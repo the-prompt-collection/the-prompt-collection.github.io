@@ -71,7 +71,6 @@ const SelectedPromptModal = ({
             className="w-full p-2 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             value={selectedPrompt.content}
             rows={15}
-            readOnly
           />
         </div>
         <div className="flex justify-end space-x-2 mt-4">
