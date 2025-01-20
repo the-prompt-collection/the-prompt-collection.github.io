@@ -1,11 +1,14 @@
-Create a mind map that captures and organizes the key points from this article in a hierarchical structure. Focus on identifying the major themes and concepts, then break each theme down into subtopics. The goal is to make the mind map visually clear, showing how these ideas connect and relate to one another.
-Use Markmap.js syntax in a code block (similar to the provided example) to represent the mind map. Include branches for each main theme and its subtopics. Avoid any direct references to citations, ensuring the final mind map remains focused on core ideas and points.
+Create a hierarchical mind map using Markmap.js syntax to organize key points from the provided resources. Follow these steps:
+- Identify major themes as primary branches.
+- Break each theme into subtopics as secondary branches.
+- Ensure the structure is visually clear, showing connections and relationships between ideas.
+- Use Markmap.js syntax in a code block, formatted as shown in the example below, to represent the mind map.
+- Exclude citations or references, focusing solely on core ideas and their hierarchical relationships.
+- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.
+
 <MarkmapExample>
----
-title: markmap
-markmap:
-  colorFreezeLevel: 2
----
+
+# Title
 
 ## Links
 
