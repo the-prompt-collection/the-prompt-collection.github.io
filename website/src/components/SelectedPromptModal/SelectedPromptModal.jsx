@@ -5,7 +5,6 @@ import { X, Copy, Check, Edit, Trash2, Plus, Save, Zap, Heart } from 'lucide-rea
 import ShareButton from '../ShareButton/ShareButton';
 import '../../styles/animations.css';
 import aiTools from '../../data/ai-tools.json';
-import { loadToolUsageStats } from '../../utils/localStorage';
 
 const SelectedPromptModal = ({
   selectedPrompt,
