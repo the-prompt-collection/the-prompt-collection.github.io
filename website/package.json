@@ -10,17 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vercel/analytics": "^1.4.1",
-    "@vercel/speed-insights": "^1.1.0",
-    "axios": "^1.7.9",
-    "cheerio": "^1.0.0",
-    "lodash.debounce": "^4.0.8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.4.0",
-    "react-infinite-scroll-component": "^6.1.0",
-    "react-router-dom": "^7.1.1",
-    "react-window": "^1.8.11"
+    "axios": "^latest",
+    "cheerio": "^latest",
+    "lodash.debounce": "^latest",
+    "lucide-react": "^latest",
+    "react": "^latest",
+    "react-dom": "^latest",
+    "react-infinite-scroll-component": "^latest"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

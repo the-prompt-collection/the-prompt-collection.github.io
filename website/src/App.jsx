@@ -12,6 +12,7 @@ import references from './references.json';
 import axios from 'axios';
 import { load } from 'cheerio';
 import debounce from 'lodash.debounce';
+import aiTools from './data/ai-tools.json';
 
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
@@ -25,8 +26,13 @@ const App = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const [referencesData, setReferencesData] = useState([]);
-  const [customTools, setCustomTools] = useState([]);
+  const [customTools, setCustomTools] = useState(() => {
+    // Initialize from localStorage on component mount
+    const saved = localStorage.getItem('customTools');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showHero, setShowHero] = useState(true);
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
@@ -158,36 +164,21 @@ const App = () => {
   const handleStartConversation = (website, promptContent) => {
     // Copy the system prompt to the clipboard
     navigator.clipboard.writeText(promptContent).then(() => {
-      setIsCopied(true); // Set copied state to true
-      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
     });
 
-    // Redirect to the selected platform
+    // Find the tool URL from either ai-tools.json or custom tools
+    const predefinedTool = aiTools.tools.find(tool => tool.name === website);
+    const customTool = customTools.find(tool => tool.name === website);
+
     let url = '';
-    switch (website) {
-      case 'Gemini':
-        url = 'https://gemini.google.com/app';
-        break;
-      case 'ChatGPT':
-        url = 'https://chatgpt.com/';
-        break;
-      case 'DeepSeek':
-        url = 'https://chat.deepseek.com';
-        break;
-      case 'Grok':
-        url = 'https://x.com/i/grok';
-        break;
-      case 'Perplexity':
-        url = 'https://www.perplexity.ai/';
-        break;
-      default:
-        // Check if the website is a custom tool
-        const customTool = customTools.find((tool) => tool.name === website);
-        if (customTool) {
-          url = customTool.url;
-        } else {
-          return;
-        }
+    if (predefinedTool) {
+      url = predefinedTool.url;
+    } else if (customTool) {
+      url = customTool.url;
+    } else {
+      return;
     }
 
     window.open(url, '_blank');
@@ -199,20 +190,46 @@ const App = () => {
       const data = await Promise.all(
         references.map(async (url) => {
           try {
-            // Use a CORS proxy to bypass CORS restrictions
             const proxyUrl = `https://corsproxy.io/${url}`;
             const response = await axios.get(proxyUrl);
-            const $ = load(response.data); // Use the named import `load`
+            const $ = load(response.data);
 
-            const title = $('title').text() || 'No Title';
-            const description =
-              $('meta[name="description"]').attr('content') ||
-              $('p').first().text().substring(0, 100) + '...';
+            // Get clean title
+            const title = $('title').text().split('|')[0].trim() || 'No Title';
 
-            return { title, description, url };
+            // Get meta description or first paragraph
+            let description = $('meta[name="description"]').attr('content');
+            if (!description) {
+              // Get first 2-3 sentences from first paragraph
+              const firstPara = $('p').first().text();
+              const sentences = firstPara.match(/[^.!?]+[.!?]+/g) || [];
+              description = sentences.slice(0, 2).join(' ').trim();
+            }
+
+            // Get source name from URL
+            const source = new URL(url).hostname
+              .replace('www.', '')
+              .split('.')
+              .slice(0, -1)
+              .join('.')
+              .split('-')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+
+            return {
+              title,
+              description: description || 'No description available.',
+              url,
+              source
+            };
           } catch (error) {
             console.error(`Error fetching data from ${url}:`, error);
-            return { title: 'Error', description: 'Unable to fetch data', url };
+            return {
+              title: 'Error loading resource',
+              description: 'Unable to fetch content. Please check the original source.',
+              url,
+              source: new URL(url).hostname.replace('www.', '')
+            };
           }
         })
       );
@@ -242,34 +259,176 @@ const App = () => {
     );
   };
 
+  // Enhanced URL parameter handling
+  useEffect(() => {
+    const handleUrlParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      const sharedPromptName = params.get('prompt');
+
+      if (sharedPromptName) {
+        const promptToShow = prompts.find(p => p.filename === decodeURIComponent(sharedPromptName));
+        if (promptToShow) {
+          setSelectedPrompt(promptToShow);
+        }
+      }
+    };
+
+    // Handle initial load and browser back/forward
+    handleUrlParams();
+    window.addEventListener('popstate', handleUrlParams);
+
+    return () => window.removeEventListener('popstate', handleUrlParams);
+  }, []);
+
+  // Update URL when modal opens/closes
+  useEffect(() => {
+    const url = new URL(window.location);
+
+    if (selectedPrompt) {
+      url.searchParams.set('prompt', encodeURIComponent(selectedPrompt.filename));
+    } else {
+      url.searchParams.delete('prompt');
+    }
+
+    // Only update if URL actually changed to avoid unnecessary history entries
+    if (url.toString() !== window.location.href) {
+      window.history.pushState({}, '', url);
+    }
+  }, [selectedPrompt]);
+
+  // Handle modal close via browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!new URLSearchParams(window.location.search).has('prompt')) {
+        setSelectedPrompt(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Update URL with selected filters
+  const updateUrlWithFilters = useCallback(() => {
+    const url = new URL(window.location);
+
+    if (selectedCategory) {
+      url.searchParams.set('category', selectedCategory);
+    } else {
+      url.searchParams.delete('category');
+    }
+
+    if (selectedTags.length > 0) {
+      url.searchParams.set('tags', selectedTags.join(','));
+    } else {
+      url.searchParams.delete('tags');
+    }
+
+    window.history.pushState({}, '', url);
+  }, [selectedCategory, selectedTags]);
+
+  // Handle initial URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const categoryParam = params.get('category');
+    const tagsParam = params.get('tags');
+
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+      setVisiblePrompts(groupedPrompts[categoryParam]?.slice(0, PAGE_SIZE) || []);
+      setShowHero(false);
+    }
+
+    if (tagsParam) {
+      const tags = tagsParam.split(',');
+      setSelectedTags(tags);
+      setShowHero(false);
+    }
+  }, []);
+
+  // Update URL when filters change
+  useEffect(() => {
+    updateUrlWithFilters();
+    setShowHero(!selectedCategory && selectedTags.length === 0);
+  }, [selectedCategory, selectedTags, updateUrlWithFilters]);
+
   // Determine whether to show the category list or filtered prompts
   const showCategoryList = !searchQuery && selectedTags.length === 0 && !selectedCategory;
+
+  const getFilterShareContent = () => {
+    const parts = [];
+    if (selectedCategory) parts.push(`category: ${selectedCategory}`);
+    if (selectedTags.length) parts.push(`tags: ${selectedTags.join(', ')}`);
+    return `Check out these prompts ${parts.join(' and ')} from The Prompt Collection`;
+  };
+
+  // Get total number of filtered prompts
+  const getTotalFilteredPrompts = useCallback(() => {
+    if (selectedCategory) {
+      return groupedPrompts[selectedCategory]?.length || 0;
+    }
+    return filterPrompts().length;
+  }, [selectedCategory, filterPrompts, groupedPrompts]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4">
-        <Header totalPrompts={totalPrompts} />
-        <SearchBar onSearch={handleSearch} />
-        <TagFilter
-          tags={visibleTags}
-          selectedTags={selectedTags}
-          onTagToggle={handleTagToggle}
-          showAllTags={showAllTags}
-          onToggleShowAllTags={() => setShowAllTags(!showAllTags)}
-          tagCounts={tagCounts}
-        />
-        <PromptList
-          prompts={visiblePrompts}
-          loadMorePrompts={loadMorePrompts}
-          hasMore={hasMore}
-          onSelectPrompt={setSelectedPrompt}
-          tagCounts={tagCounts}
-          selectedCategory={selectedCategory}
-          onCategoryClick={handleCategoryClick}
-          onBackToCategories={handleBackToCategories}
-          groupedPrompts={groupedPrompts}
-          showCategoryList={showCategoryList}
-        />
+        <Header />
+
+        {showHero && (
+          <div className="flex flex-col items-center justify-center py-16 space-y-8">
+            <div className="text-center space-y-6 max-w-3xl mx-auto">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white">
+                Your Gateway to AI Conversations
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-400">
+                Discover and use curated prompts to enhance your AI interactions
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Search and Filters Section - Show search only when no filters are active */}
+        <div className={`flex flex-col items-center justify-center ${showHero ? '' : 'py-2'} ${selectedTags.length > 0 ? 'space-y-2' : 'space-y-4'}`}>
+          {(!selectedCategory && selectedTags.length === 0) && (
+            <div className="w-full max-w-2xl mx-auto">
+              <SearchBar onSearch={handleSearch} />
+            </div>
+          )}
+
+          <div className="w-full max-w-4xl mx-auto">
+            <TagFilter
+              tags={visibleTags}
+              selectedTags={selectedTags}
+              onTagToggle={handleTagToggle}
+              showAllTags={showAllTags}
+              onToggleShowAllTags={() => setShowAllTags(!showAllTags)}
+              tagCounts={tagCounts}
+              onShareFilters={() => {}}
+              showShareButton={!showHero}
+              shareContent={getFilterShareContent()}
+              shareTitle="Filtered Prompts - The Prompt Collection"
+            />
+          </div>
+        </div>
+
+        {/* Prompts List with reduced margin when filters are active */}
+        <div className={`${(!showHero && (selectedCategory || selectedTags.length > 0)) ? 'mt-2' : 'mt-8'}`}>
+          <PromptList
+            prompts={visiblePrompts}
+            loadMorePrompts={loadMorePrompts}
+            hasMore={hasMore}
+            onSelectPrompt={setSelectedPrompt}
+            selectedCategory={selectedCategory}
+            onCategoryClick={handleCategoryClick}
+            onBackToCategories={handleBackToCategories}
+            groupedPrompts={groupedPrompts}
+            showCategoryList={showCategoryList}
+            totalPrompts={totalPrompts}
+            totalFilteredPrompts={getTotalFilteredPrompts()}
+          />
+        </div>
+
         <ReferencesSection referencesData={referencesData} />
         {selectedPrompt && (
           <SelectedPromptModal
