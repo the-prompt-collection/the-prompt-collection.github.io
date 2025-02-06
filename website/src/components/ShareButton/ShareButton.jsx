@@ -16,28 +16,28 @@ const ShareButton = ({ url, text = 'Share', content, title }) => {
       name: 'Twitter',
       icon: <FiTwitter />,
       url: `https://twitter.com/intent/tweet?text=${generateShareContent()}`,
-      className: "hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:text-[#1DA1F2] dark:hover:text-[#1DA1F2] group",
+      className: "hover:bg-sky-50 dark:hover:bg-sky-900/50 hover:text-[#1DA1F2] dark:hover:text-[#1DA1F2] group text-gray-700 dark:text-gray-300",
       iconClassName: "group-hover:text-[#1DA1F2]"
     },
     {
       name: 'Facebook',
       icon: <FiFacebook />,
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      className: "hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-[#4267B2] dark:hover:text-[#4267B2] group",
+      className: "hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-[#4267B2] dark:hover:text-[#4267B2] group text-gray-700 dark:text-gray-300",
       iconClassName: "group-hover:text-[#4267B2]"
     },
     {
       name: 'LinkedIn',
       icon: <FiLinkedin />,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      className: "hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-[#0077b5] dark:hover:text-[#0077b5] group",
+      className: "hover:bg-blue-50 dark:hover:bg-blue-900/50 hover:text-[#0077b5] dark:hover:text-[#0077b5] group text-gray-700 dark:text-gray-300",
       iconClassName: "group-hover:text-[#0077b5]"
     },
     {
       name: 'Email',
       icon: <FiMail />,
       url: `mailto:?subject=${encodeURIComponent(title || 'Check out this prompt!')}&body=${generateShareContent()}`,
-      className: "hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 group",
+      className: "hover:bg-red-50 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-400 group text-gray-700 dark:text-gray-300",
       iconClassName: "group-hover:text-red-600 dark:group-hover:text-red-400"
     },
     {
@@ -49,7 +49,7 @@ const ShareButton = ({ url, text = 'Share', content, title }) => {
         setTimeout(() => setShowToast(false), 2000);
         setShowMenu(false);
       },
-      className: "hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 group",
+      className: "hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-600 dark:hover:text-purple-400 group text-gray-700 dark:text-gray-300",
       iconClassName: "group-hover:text-purple-600 dark:group-hover:text-purple-400"
     },
   ];
@@ -66,12 +66,12 @@ const ShareButton = ({ url, text = 'Share', content, title }) => {
 
       {/* Share Menu */}
       {showMenu && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border dark:border-gray-700">
-          <div className="flex justify-between items-center p-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-750 rounded-t-md">
-            <span className="text-sm font-medium">Share via</span>
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+          <div className="flex justify-between items-center p-3 border-b border-gray-200 dark:border-gray-700">
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Share via</span>
             <button
               onClick={() => setShowMenu(false)}
-              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500 dark:text-gray-400"
             >
               <FiX className="w-4 h-4" />
             </button>
@@ -90,7 +90,9 @@ const ShareButton = ({ url, text = 'Share', content, title }) => {
                   }
                 }}
               >
-                {React.cloneElement(option.icon, { className: `w-4 h-4 ${option.iconClassName}` })}
+                {React.cloneElement(option.icon, {
+                  className: `w-4 h-4 text-gray-500 dark:text-gray-400 ${option.iconClassName}`
+                })}
                 <span>{option.name}</span>
               </button>
             ))}
@@ -100,7 +102,7 @@ const ShareButton = ({ url, text = 'Share', content, title }) => {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-4 right-4 px-4 py-2 bg-gray-900 text-white text-sm rounded-full shadow-lg">
+        <div className="fixed bottom-4 right-4 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm rounded-full shadow-lg">
           Link copied to clipboard! 🎉
         </div>
       )}
