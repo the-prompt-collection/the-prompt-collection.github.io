@@ -42,3 +42,33 @@ export const loadReferencesData = () => {
 export const saveReferencesData = (data) => {
   localStorage.setItem('referencesData', JSON.stringify(data));
 };
+
+export const loadDarkMode = () => {
+  try {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  } catch (error) {
+    console.error('Error loading dark mode:', error);
+    return false;
+  }
+};
+
+export const saveDarkMode = (isDarkMode) => {
+  try {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  } catch (error) {
+    console.error('Error saving dark mode:', error);
+  }
+};
+
+// Function to load all stored state
+export const loadStoredState = () => {
+  return {
+    customTools: loadCustomTools(),
+    promptUsageStats: loadPromptUsageStats(),
+    toolUsageStats: loadToolUsageStats(),
+    favoritePrompts: loadFavoritePrompts(),
+    darkMode: loadDarkMode(),
+  };
+};

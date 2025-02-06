@@ -14,11 +14,29 @@ import { load } from 'cheerio';
 import debounce from 'lodash.debounce';
 import aiTools from './data/ai-tools.json';
 import TopPrompts from './components/TopPrompts';
-import { loadCustomTools, saveCustomTools, loadPromptUsageStats, savePromptUsageStats, loadToolUsageStats, saveToolUsageStats, loadFavoritePrompts, saveFavoritePrompts, loadReferencesData, saveReferencesData } from './utils/localStorage';
+import {
+  loadStoredState,
+  saveDarkMode,
+  saveCustomTools,
+  savePromptUsageStats,
+  saveToolUsageStats,
+  saveFavoritePrompts,
+  saveReferencesData,
+  loadCustomTools,
+  loadReferencesData
+} from './utils/localStorage';
 
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
 const App = () => {
+  // Initialize all state from localStorage
+  const storedState = loadStoredState();
+  const [isDarkMode, setIsDarkMode] = useState(storedState.darkMode);
+  const [customTools, setCustomTools] = useState(storedState.customTools);
+  const [usageStats, setUsageStats] = useState(storedState.promptUsageStats);
+  const [toolUsageStats, setToolUsageStats] = useState(storedState.toolUsageStats);
+  const [favoritePrompts, setFavoritePrompts] = useState(storedState.favoritePrompts);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [visiblePrompts, setVisiblePrompts] = useState([]);
@@ -28,14 +46,8 @@ const App = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const [referencesData, setReferencesData] = useState([]);
-  const [customTools, setCustomTools] = useState(() => loadCustomTools());
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showHero, setShowHero] = useState(true);
-
-  // New state: usageStats to track prompt usage counts (keyed by prompt filename)
-  const [usageStats, setUsageStats] = useState(() => loadPromptUsageStats());
-  const [toolUsageStats, setToolUsageStats] = useState(() => loadToolUsageStats());
-  const [favoritePrompts, setFavoritePrompts] = useState(() => loadFavoritePrompts());
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
@@ -48,13 +60,14 @@ const App = () => {
     saveCustomTools(customTools);
   }, [customTools]);
 
-  // Load usageStats from localStorage on mount (redundant with initialization if needed)
   useEffect(() => {
-    const storedStats = localStorage.getItem('promptUsageStats');
-    if (storedStats) {
-      setUsageStats(JSON.parse(storedStats));
-    }
-  }, []);
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    saveDarkMode(isDarkMode);
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => !prev);
+  };
 
   // Extract all unique tags from prompts
   const allTags = [...new Set(prompts.flatMap((prompt) => prompt.tags || []))];
@@ -493,7 +506,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4">
-        <Header />
+        <Header isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
 
         {showHero && (
           <div className="flex flex-col items-center justify-center py-16 space-y-8">
