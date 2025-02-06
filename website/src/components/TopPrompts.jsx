@@ -1,21 +1,25 @@
 import React from 'react';
+import { Trash2, Zap, Heart } from 'lucide-react';
 
-const TopPrompts = ({ topPrompts, handleSelectPrompt }) => {
-  if (!topPrompts || topPrompts.length === 0) return null;
+const PromptList = ({ prompts, handleSelectPrompt, title, onRemoveFavorite, icon: Icon }) => {
+  if (!prompts || prompts.length === 0) return null;
   return (
-    <section className="mb-8">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-        Top 5 Frequent Prompts
+    <div className="w-full">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        {Icon && <Icon className="w-6 h-6" />}
+        {title}
       </h2>
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {topPrompts.map((prompt) => (
+        {prompts.map((prompt) => (
           <li
             key={prompt.filename}
-            onClick={() => handleSelectPrompt(prompt)}
             className="py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <div className="flex items-center gap-2">
-              <span className="flex-1">
+              <span
+                className="flex-1"
+                onClick={() => handleSelectPrompt(prompt)}
+              >
                 {prompt.title || prompt.filename || 'Untitled Prompt'}
               </span>
               {prompt.tags && prompt.tags.map((tag, i) => {
@@ -33,14 +37,47 @@ const TopPrompts = ({ topPrompts, handleSelectPrompt }) => {
                   </span>
                 );
               })}
-              {/* Updated usage count with conditional icon */}
               <span className="px-2 py-0.5 rounded text-xs bg-green-200 text-green-800">
                 {prompt.usageCount !== undefined ? prompt.usageCount : 0} { (prompt.usageCount === 0) ? <span role="img" aria-label="no usage">😴</span> : <span role="img" aria-label="usage count">🔥</span> }
               </span>
+              {onRemoveFavorite && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveFavorite(prompt);
+                  }}
+                  className="p-1 text-gray-400 hover:text-red-500 rounded"
+                  title="Remove from favorites"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
             </div>
           </li>
         ))}
       </ul>
+    </div>
+  );
+};
+
+const TopPrompts = ({ topPrompts, favoritePrompts, handleSelectPrompt, onRemoveFavorite }) => {
+  return (
+    <section>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PromptList
+          prompts={topPrompts}
+          handleSelectPrompt={handleSelectPrompt}
+          title="Top 5 Frequent Prompts"
+          icon={Zap}
+        />
+        <PromptList
+          prompts={favoritePrompts}
+          handleSelectPrompt={handleSelectPrompt}
+          title={`Favorite Prompts (${favoritePrompts?.length || 0})`}
+          onRemoveFavorite={onRemoveFavorite}
+          icon={Heart}
+        />
+      </div>
     </section>
   );
 };

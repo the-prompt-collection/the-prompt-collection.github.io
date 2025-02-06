@@ -1,8 +1,9 @@
 import React from 'react';
 import '../../styles/animations.css';
 import ShareButton from '../ShareButton/ShareButton';
+import { Heart } from 'lucide-react';
 
-const TagFilter = ({ tags, selectedTags, onTagToggle, showAllTags, onToggleShowAllTags, tagCounts, showShareButton }) => {
+const TagFilter = ({ tags, selectedTags, onTagToggle, showAllTags, onToggleShowAllTags, tagCounts, showShareButton, favoritePrompts }) => {
   const baseClass = "text-sm px-3 py-1 rounded-full cursor-pointer";
 
   return (
@@ -18,6 +19,19 @@ const TagFilter = ({ tags, selectedTags, onTagToggle, showAllTags, onToggleShowA
 
       <div className={`relative ${selectedTags.length > 0 ? 'min-h-[50px]' : 'min-h-[100px]'} overflow-hidden`}>
         <div className="flex flex-wrap gap-2 justify-center items-center p-2">
+          {/* Favorites tag */}
+          <span
+            onClick={() => onTagToggle('favorites')}
+            className={`${baseClass} ${
+              selectedTags.includes('favorites')
+                ? "bg-red-500 text-white font-bold"
+                : "bg-gray-200 text-gray-800"
+            } flex items-center gap-1`}
+          >
+            <Heart size={14} className={selectedTags.includes('favorites') ? "fill-current" : ""} />
+            Favorites ({favoritePrompts.length})
+          </span>
+          {/* Regular tags */}
           {tags.map((tag) => {
             const extraClasses = selectedTags.includes(tag)
               ? "bg-blue-500 text-white font-bold"

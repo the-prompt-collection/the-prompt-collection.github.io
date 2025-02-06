@@ -1,6 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PromptItem from './PromptItem'; // New import
+import { FolderOpen } from 'lucide-react';
 
 const PromptList = ({
   prompts,
@@ -20,6 +21,10 @@ const PromptList = ({
     return (
       <>
         <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+            <FolderOpen className="w-7 h-7" />
+            Browse by Category
+          </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400">
             Browse through our collection of <span className="font-semibold text-blue-600 dark:text-blue-400">{totalPrompts}</span> carefully curated prompts
           </p>
@@ -66,7 +71,7 @@ const PromptList = ({
         next={loadMorePrompts}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
       >
         {prompts.map((prompt, index) => (
           <PromptItem

@@ -14,7 +14,7 @@ import { load } from 'cheerio';
 import debounce from 'lodash.debounce';
 import aiTools from './data/ai-tools.json';
 import TopPrompts from './components/TopPrompts';
-import { loadCustomTools, saveCustomTools, loadPromptUsageStats, savePromptUsageStats, loadToolUsageStats, saveToolUsageStats } from './utils/localStorage';
+import { loadCustomTools, saveCustomTools, loadPromptUsageStats, savePromptUsageStats, loadToolUsageStats, saveToolUsageStats, loadFavoritePrompts, saveFavoritePrompts, loadReferencesData, saveReferencesData } from './utils/localStorage';
 
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
@@ -35,6 +35,7 @@ const App = () => {
   // New state: usageStats to track prompt usage counts (keyed by prompt filename)
   const [usageStats, setUsageStats] = useState(() => loadPromptUsageStats());
   const [toolUsageStats, setToolUsageStats] = useState(() => loadToolUsageStats());
+  const [favoritePrompts, setFavoritePrompts] = useState(() => loadFavoritePrompts());
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
@@ -93,6 +94,11 @@ const App = () => {
       const subcategories = prompt.subcategories || [];
       const content = prompt.content || '';
 
+      // Check if favorites filter is active
+      if (selectedTags.includes('favorites') && !favoritePrompts.includes(prompt.filename)) {
+        return false;
+      }
+
       const matchesSearch =
         category.toLowerCase().includes(searchQuery.toLowerCase()) ||
         subcategories.some((subcategory) =>
@@ -102,11 +108,11 @@ const App = () => {
 
       const matchesTags =
         selectedTags.length === 0 ||
-        selectedTags.every((tag) => (prompt.tags || []).includes(tag));
+        selectedTags.every((tag) => tag === 'favorites' || (prompt.tags || []).includes(tag));
 
       return matchesSearch && matchesTags;
     });
-  }, [searchQuery, selectedTags]);
+  }, [searchQuery, selectedTags, favoritePrompts]);
 
   // Load more prompts for infinite scroll
   const loadMorePrompts = () => {
@@ -241,59 +247,72 @@ const App = () => {
     });
   };
 
-  // Fetch reference data using a CORS proxy
+  // Optimized reference data fetching
   useEffect(() => {
-    const fetchAllReferences = async () => {
-      const data = await Promise.all(
-        references.map(async (url) => {
-          try {
-            const proxyUrl = `https://corsproxy.io/${url}`;
-            const response = await axios.get(proxyUrl);
-            const $ = load(response.data);
+    const fetchReferences = async () => {
+      // Load cached data
+      const cachedData = loadReferencesData();
+      const newReferencesData = [];
 
-            // Get clean title
-            const title = $('title').text().split('|')[0].trim() || 'No Title';
+      for (const url of references) {
+        // Check if we have cached data for this URL
+        if (cachedData[url]) {
+          newReferencesData.push(cachedData[url]);
+          continue;
+        }
 
-            // Get meta description or first paragraph
-            let description = $('meta[name="description"]').attr('content');
-            if (!description) {
-              // Get first 2-3 sentences from first paragraph
-              const firstPara = $('p').first().text();
-              const sentences = firstPara.match(/[^.!?]+[.!?]+/g) || [];
-              description = sentences.slice(0, 2).join(' ').trim();
-            }
+        // Fetch only if not in cache
+        try {
+          const proxyUrl = `https://corsproxy.io/${url}`;
+          const response = await axios.get(proxyUrl);
+          const $ = load(response.data);
 
-            // Get source name from URL
-            const source = new URL(url).hostname
-              .replace('www.', '')
-              .split('.')
-              .slice(0, -1)
-              .join('.')
-              .split('-')
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(' ');
-
-            return {
-              title,
-              description: description || 'No description available.',
-              url,
-              source
-            };
-          } catch (error) {
-            console.error(`Error fetching data from ${url}:`, error);
-            return {
-              title: 'Error loading resource',
-              description: 'Unable to fetch content. Please check the original source.',
-              url,
-              source: new URL(url).hostname.replace('www.', '')
-            };
+          const title = $('title').text().split('|')[0].trim() || 'No Title';
+          let description = $('meta[name="description"]').attr('content');
+          if (!description) {
+            const firstPara = $('p').first().text();
+            const sentences = firstPara.match(/[^.!?]+[.!?]+/g) || [];
+            description = sentences.slice(0, 2).join(' ').trim();
           }
-        })
-      );
-      setReferencesData(data);
+
+          const source = new URL(url).hostname
+            .replace('www.', '')
+            .split('.')
+            .slice(0, -1)
+            .join('.')
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+          const referenceData = {
+            title,
+            description: description || 'No description available.',
+            url,
+            source
+          };
+
+          // Update cache for this URL
+          cachedData[url] = referenceData;
+          newReferencesData.push(referenceData);
+        } catch (error) {
+          console.error(`Error fetching data from ${url}:`, error);
+          const errorData = {
+            title: 'Error loading resource',
+            description: 'Unable to fetch content. Please check the original source.',
+            url,
+            source: new URL(url).hostname.replace('www.', '')
+          };
+          cachedData[url] = errorData;
+          newReferencesData.push(errorData);
+        }
+      }
+
+      // Save updated cache
+      saveReferencesData(cachedData);
+      setReferencesData(newReferencesData);
     };
 
-    fetchAllReferences();
+    fetchReferences();
   }, []);
 
   // Handle adding a custom tool
@@ -450,6 +469,27 @@ const App = () => {
     })
     .filter(prompt => prompt);
 
+  const handleToggleFavorite = (prompt) => {
+    setFavoritePrompts((prev) => {
+      const isFavorite = prev.includes(prompt.filename);
+      const newFavorites = isFavorite
+        ? prev.filter(filename => filename !== prompt.filename)
+        : [...prev, prompt.filename];
+      saveFavoritePrompts(newFavorites);
+      return newFavorites;
+    });
+  };
+
+  // Get favorite prompts data - updated to sort by usage count
+  const favoritesData = favoritePrompts
+    .map(filename => {
+      const prompt = prompts.find(p => p.filename === filename);
+      return prompt ? { ...prompt, usageCount: usageStats[filename] || 0 } : null;
+    })
+    .filter(prompt => prompt)
+    .sort((a, b) => (b.usageCount || 0) - (a.usageCount || 0)) // Sort by usage count
+    .slice(0, 5);  // Take only top 5
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4">
@@ -476,7 +516,7 @@ const App = () => {
             </div>
           )}
 
-          <div className="w-full max-w-4xl mx-auto space-y-0">  {/* reduced spacing from space-y-1 to space-y-0 */}
+          <div className="w-full mx-auto space-y-0">  {/* reduced spacing from space-y-1 to space-y-0 */}
             <TagFilter
               tags={visibleTags}
               selectedTags={selectedTags}
@@ -484,18 +524,25 @@ const App = () => {
               showAllTags={showAllTags}
               onToggleShowAllTags={() => setShowAllTags(!showAllTags)}
               tagCounts={tagCounts}
-              onShareFilters={() => {}}
               showShareButton={!showHero}
               shareContent={getFilterShareContent()}
               shareTitle="Filtered Prompts - The Prompt Collection"
+              favoritePrompts={favoritePrompts}
             />
             {/* Extracted Top Prompts Section remains unchanged */}
-            {showHero && <TopPrompts topPrompts={topPrompts} handleSelectPrompt={handleSelectPrompt} />}
+            {showHero && (
+              <TopPrompts
+                topPrompts={topPrompts}
+                favoritePrompts={favoritesData}
+                handleSelectPrompt={handleSelectPrompt}
+                onRemoveFavorite={(prompt) => handleToggleFavorite(prompt)}
+              />
+            )}
           </div>
         </div>
 
-        {/* Prompts List with reduced margin when filters are active */}
-        <div className={`${(!showHero && (selectedCategory || selectedTags.length > 0)) ? 'mt-1' : 'mt-4'}`}>  {/* reduced margin above PromptList */}
+        {/* Prompts List with full width */}
+        <div className={`w-full ${(!showHero && (selectedCategory || selectedTags.length > 0)) ? 'mt-1' : 'mt-4'}`}>
           <PromptList
             prompts={visiblePrompts}
             loadMorePrompts={loadMorePrompts}
@@ -524,6 +571,8 @@ const App = () => {
             onAddCustomTool={handleAddCustomTool}
             onDeleteCustomTool={handleDeleteCustomTool}
             onModifyCustomTool={handleModifyCustomTool}
+            isFavorite={favoritePrompts.includes(selectedPrompt.filename)}
+            onToggleFavorite={() => handleToggleFavorite(selectedPrompt)}
           />
         )}
         <Footer />

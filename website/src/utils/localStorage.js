@@ -24,3 +24,21 @@ export const loadToolUsageStats = () => {
 export const saveToolUsageStats = (stats) => {
   localStorage.setItem('toolUsageStats', JSON.stringify(stats));
 };
+
+export const loadFavoritePrompts = () => {
+  const saved = localStorage.getItem('favoritePrompts');
+  return saved ? JSON.parse(saved) : [];
+};
+
+export const saveFavoritePrompts = (favorites) => {
+  localStorage.setItem('favoritePrompts', JSON.stringify(favorites));
+};
+
+export const loadReferencesData = () => {
+  const saved = localStorage.getItem('referencesData');
+  return saved ? JSON.parse(saved) : {};
+};
+
+export const saveReferencesData = (data) => {
+  localStorage.setItem('referencesData', JSON.stringify(data));
+};

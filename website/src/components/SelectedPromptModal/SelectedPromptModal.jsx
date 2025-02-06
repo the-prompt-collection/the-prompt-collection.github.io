@@ -1,7 +1,7 @@
 // src/components/SelectedPromptModal/SelectedPromptModal.jsx
 import React, { useState, useEffect } from 'react';
 import { disableScroll, enableScroll } from '../../utils/scrollLock';
-import { X, Copy, Check, Edit, Trash2, Plus, Save, Zap } from 'lucide-react';
+import { X, Copy, Check, Edit, Trash2, Plus, Save, Zap, Heart } from 'lucide-react';
 import ShareButton from '../ShareButton/ShareButton';
 import '../../styles/animations.css';
 import aiTools from '../../data/ai-tools.json';
@@ -17,6 +17,8 @@ const SelectedPromptModal = ({
   onAddCustomTool,
   onDeleteCustomTool,
   onModifyCustomTool,
+  isFavorite,
+  onToggleFavorite
 }) => {
   const [toolName, setToolName] = useState('');
   const [toolUrl, setToolUrl] = useState('');
@@ -125,6 +127,19 @@ const SelectedPromptModal = ({
               {selectedPrompt.title || selectedPrompt.filename}
             </h2>
             <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={onToggleFavorite}
+                className={`p-2 rounded-full transition-colors duration-200 ${
+                  isFavorite
+                    ? 'text-red-500 hover:bg-red-100'
+                    : 'text-gray-400 hover:bg-gray-100'
+                }`}
+                title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <Heart
+                  className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`}
+                />
+              </button>
               <ShareButton
                 url={getShareUrl()}
                 text="Share"
