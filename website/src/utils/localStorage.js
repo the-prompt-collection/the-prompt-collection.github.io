@@ -76,3 +76,18 @@ export const loadStoredState = () => {
     darkMode: loadDarkMode(),
   };
 };
+
+export const getMostFrequentTool = (tools) => {
+  const stats = loadToolUsageStats();
+  let maxUsage = -1;
+  tools.forEach(tool => {
+    const usage = stats[tool.name] || 0;
+    if (usage > maxUsage) {
+      maxUsage = usage;
+    }
+  });
+  const candidates = tools.filter(tool => (stats[tool.name] || 0) === maxUsage);
+  if (candidates.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * candidates.length);
+  return candidates[randomIndex];
+};

@@ -1,32 +1,17 @@
 import React from 'react';
 import { Zap } from 'lucide-react';
-import aiTools from '../../data/ai-tools.json'; // added import
+import aiTools from '../../data/ai-tools.json';
+import { getMostFrequentTool } from '../../utils/localStorage';
 
-// New helper: Get the most frequent AI tool based on local usage stats (using aiTools)
-const getMostFrequentTool = () => {
-  const stats = JSON.parse(localStorage.getItem('toolUsageStats')) || {};
-  const allTools = [...aiTools.tools];
-  let maxUsage = -1;
-  allTools.forEach(tool => {
-    const usage = stats[tool.name] || 0;
-    if (usage > maxUsage) {
-      maxUsage = usage;
-    }
-  });
-  const candidates = allTools.filter(tool => (stats[tool.name] || 0) === maxUsage);
-  if (candidates.length === 0) return null;
-  const randomIndex = Math.floor(Math.random() * candidates.length);
-  return candidates[randomIndex];
-};
+const PromptItem = ({ prompt, onSelectPrompt, onQuickAction, customTools = [] }) => {
+  // Include both predefined and custom tools for frequency check
+  const mostFrequentTool = getMostFrequentTool([...aiTools.tools, ...customTools]);
 
-const PromptItem = ({ prompt, onSelectPrompt, onQuickAction }) => {
   return (
     <div
       onClick={() => onSelectPrompt(prompt)}
-      // Removed transform and hover scale classes to reduce lag; retained cursor-pointer
       className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col gap-3 h-full border border-gray-200 dark:border-gray-700"
     >
-      {/* Modified header: usage count and Quick Action small button with dynamic label */}
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-500">
           {prompt.usageCount !== undefined ? prompt.usageCount : 0}{' '}
@@ -34,16 +19,17 @@ const PromptItem = ({ prompt, onSelectPrompt, onQuickAction }) => {
             ? <span role="img" aria-label="no usage">😴</span>
             : <span role="img" aria-label="usage count">🔥</span>}
         </span>
-        {onQuickAction && (
+        {onQuickAction && mostFrequentTool && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onQuickAction(prompt);
             }}
             className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center gap-1"
+            title={`Quick open with ${mostFrequentTool.name}`}
           >
             <Zap size={16} />
-            {getMostFrequentTool() ? getMostFrequentTool().name : ''}
+            {mostFrequentTool.name}
           </button>
         )}
       </div>
@@ -57,7 +43,6 @@ const PromptItem = ({ prompt, onSelectPrompt, onQuickAction }) => {
         </p>
       </div>
 
-      {/* Updated footer: show tags list with special highlighting for category and system tags */}
       <div className="flex flex-wrap gap-2 mt-3">
         {prompt.tags && prompt.tags.length > 0 && prompt.tags.map((tag, i) => {
           let classes = "px-2 py-1 rounded text-xs";

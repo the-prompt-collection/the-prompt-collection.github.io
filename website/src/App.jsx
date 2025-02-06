@@ -565,6 +565,7 @@ const App = () => {
             showCategoryList={showCategoryList}
             totalPrompts={totalPrompts}
             totalFilteredPrompts={getTotalFilteredPrompts()}
+            customTools={customTools} // Add this prop
           />
         </div>
 

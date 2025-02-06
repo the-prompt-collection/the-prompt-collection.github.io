@@ -5,6 +5,7 @@ import { X, Copy, Check, Edit, Trash2, Plus, Save, Zap, Heart } from 'lucide-rea
 import ShareButton from '../ShareButton/ShareButton';
 import '../../styles/animations.css';
 import aiTools from '../../data/ai-tools.json';
+import { getMostFrequentTool } from '../../utils/localStorage';
 
 const SelectedPromptModal = ({
   selectedPrompt,
@@ -77,28 +78,8 @@ const SelectedPromptModal = ({
     }
   };
 
-  // New helper: Get the most frequent AI tool based on local usage stats, or choose randomly among those tied
-  const getMostFrequentTool = () => {
-    const stats = JSON.parse(localStorage.getItem('toolUsageStats')) || {};
-    const allTools = [...aiTools.tools, ...customTools];
-    let maxUsage = -1;
-    allTools.forEach(tool => {
-      const usage = stats[tool.name] || 0;
-      if (usage > maxUsage) {
-        maxUsage = usage;
-      }
-    });
-    // Gather all tools with usage equal to maxUsage
-    const candidates = allTools.filter(tool => (stats[tool.name] || 0) === maxUsage);
-    if (candidates.length === 0) return null;
-    // Randomly select one if there are multiple candidates
-    const randomIndex = Math.floor(Math.random() * candidates.length);
-    return candidates[randomIndex];
-  };
-
-  // New handler: Use the most frequent AI tool
   const handleFrequentTool = () => {
-    const tool = getMostFrequentTool();
+    const tool = getMostFrequentTool([...aiTools.tools, ...customTools]);
     if (tool) {
       onStartConversation(tool.name, selectedPrompt.content);
     }
@@ -209,7 +190,7 @@ const SelectedPromptModal = ({
                   onClick={handleFrequentTool}
                 >
                   <Zap size={18} />
-                  {getMostFrequentTool() ? getMostFrequentTool().name : ''}
+                  {getMostFrequentTool([...aiTools.tools, ...customTools])?.name || ''}
                 </button>
               </div>
             </div>

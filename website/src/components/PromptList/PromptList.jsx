@@ -15,7 +15,8 @@ const PromptList = ({
   groupedPrompts,
   showCategoryList,
   totalPrompts,
-  totalFilteredPrompts // Add this new prop
+  totalFilteredPrompts, // Add this new prop
+  customTools // Add this new prop
 }) => {
   if (showCategoryList) {
     return (
@@ -80,6 +81,7 @@ const PromptList = ({
               prompt={prompt}
               onSelectPrompt={onSelectPrompt}
               onQuickAction={onQuickAction} // now correctly defined
+              customTools={customTools} // Pass customTools to PromptItem
             />
           ))}
         </InfiniteScroll>
