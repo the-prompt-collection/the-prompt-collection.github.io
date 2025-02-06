@@ -24,7 +24,7 @@ const PromptItem = ({ prompt, onSelectPrompt, onQuickAction }) => {
     <div
       onClick={() => onSelectPrompt(prompt)}
       // Removed transform and hover scale classes to reduce lag; retained cursor-pointer
-      className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col gap-3 h-full"
+      className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col gap-3 h-full border border-gray-200 dark:border-gray-700"
     >
       {/* Modified header: usage count and Quick Action small button with dynamic label */}
       <div className="flex justify-between items-center">

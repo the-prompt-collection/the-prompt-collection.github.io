@@ -29,7 +29,6 @@ import {
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
 const App = () => {
-  // Initialize all state from localStorage
   const storedState = loadStoredState();
   const [isDarkMode, setIsDarkMode] = useState(storedState.darkMode);
   const [customTools, setCustomTools] = useState(storedState.customTools);
@@ -60,13 +59,10 @@ const App = () => {
     saveCustomTools(customTools);
   }, [customTools]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    saveDarkMode(isDarkMode);
-  }, [isDarkMode]);
-
   const toggleDarkMode = () => {
-    setIsDarkMode(prev => !prev);
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    saveDarkMode(newMode);
   };
 
   // Extract all unique tags from prompts

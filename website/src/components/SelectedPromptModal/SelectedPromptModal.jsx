@@ -173,7 +173,6 @@ const SelectedPromptModal = ({
               className="w-full p-2 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               defaultValue={selectedPrompt.content}
               rows={15}
-              readOnly
             />
           </div>
           <div className="mt-6 border-t dark:border-gray-700 pt-4">

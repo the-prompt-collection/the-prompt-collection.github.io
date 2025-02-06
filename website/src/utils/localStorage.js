@@ -56,7 +56,11 @@ export const loadDarkMode = () => {
 export const saveDarkMode = (isDarkMode) => {
   try {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-    document.documentElement.classList.toggle('dark', isDarkMode);
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   } catch (error) {
     console.error('Error saving dark mode:', error);
   }
