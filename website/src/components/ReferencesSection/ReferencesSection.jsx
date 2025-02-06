@@ -7,7 +7,7 @@ const ReferencesSection = ({ referencesData }) => {
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
         Learn More About Prompt Engineering
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-1">
         {referencesData.map((ref, index) => (
           <a
             key={index}
@@ -18,9 +18,6 @@ const ReferencesSection = ({ referencesData }) => {
           >
             <div className="font-medium dark:text-gray-100">
               {ref.title} | {ref.source}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {ref.description}
             </div>
           </a>
         ))}
