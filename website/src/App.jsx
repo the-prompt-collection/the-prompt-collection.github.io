@@ -393,58 +393,56 @@ const App = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Update URL with selected filters
+  // Update URL with selected filters - move outside component or memoize
   const updateUrlWithFilters = useCallback(() => {
+    if (!window.history.pushState) return; // Guard against SSR
+
     const url = new URL(window.location);
-
-    if (selectedCategory) {
-      url.searchParams.set('category', selectedCategory);
-    } else {
-      url.searchParams.delete('category');
-    }
-
     if (selectedTags.length > 0) {
       url.searchParams.set('tags', selectedTags.join(','));
     } else {
       url.searchParams.delete('tags');
     }
 
-    window.history.pushState({}, '', url);
+    // Only update if URL actually changed
+    if (url.toString() !== window.location.href) {
+      window.history.pushState({}, '', url);
+    }
+  }, [selectedTags]);
+
+  // Separate effect for URL updates and hero visibility
+  useEffect(() => {
+    updateUrlWithFilters();
+  }, [selectedTags, updateUrlWithFilters]);
+
+  // Separate effect for hero visibility
+  useEffect(() => {
+    setShowHero(!selectedCategory && selectedTags.length === 0);
   }, [selectedCategory, selectedTags]);
 
-  // Handle initial URL params
+  // Handle initial URL params - only run once on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get('category');
     const tagsParam = params.get('tags');
 
-    if (categoryParam) {
+    if (categoryParam && groupedPrompts[categoryParam]) {
       setSelectedCategory(categoryParam);
-      setVisiblePrompts(groupedPrompts[categoryParam]?.slice(0, PAGE_SIZE) || []);
-      setShowHero(false);
+      setVisiblePrompts(groupedPrompts[categoryParam].slice(0, PAGE_SIZE) || []);
     }
 
     if (tagsParam) {
       const tags = tagsParam.split(',');
       setSelectedTags(tags);
-      setShowHero(false);
     }
-  }, []);
-
-  // Update URL when filters change
-  useEffect(() => {
-    updateUrlWithFilters();
-    setShowHero(!selectedCategory && selectedTags.length === 0);
-  }, [selectedCategory, selectedTags, updateUrlWithFilters]);
+  }, []); // Removed [groupedPrompts]
 
   // Determine whether to show the category list or filtered prompts
   const showCategoryList = !searchQuery && selectedTags.length === 0 && !selectedCategory;
 
   const getFilterShareContent = () => {
-    const parts = [];
-    if (selectedCategory) parts.push(`category: ${selectedCategory}`);
-    if (selectedTags.length) parts.push(`tags: ${selectedTags.join(', ')}`);
-    return `Check out these prompts ${parts.join(' and ')} from The Prompt Collection`;
+    if (selectedTags.length === 0) return '';
+    return `Check out these prompts with tags: ${selectedTags.join(', ')} from The Prompt Collection`;
   };
 
   // Get total number of filtered prompts
