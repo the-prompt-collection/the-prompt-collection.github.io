@@ -1,10 +1,11 @@
 // src/components/SelectedPromptModal/SelectedPromptModal.jsx
 import React, { useState, useEffect } from 'react';
 import { disableScroll, enableScroll } from '../../utils/scrollLock';
-import { X, Copy, Check, Edit, Trash2, Plus, Save } from 'lucide-react';
+import { X, Copy, Check, Edit, Trash2, Plus, Save, Zap } from 'lucide-react';
 import ShareButton from '../ShareButton/ShareButton';
 import '../../styles/animations.css';
 import aiTools from '../../data/ai-tools.json';
+import { loadToolUsageStats } from '../../utils/localStorage';
 
 const SelectedPromptModal = ({
   selectedPrompt,
@@ -45,10 +46,6 @@ const SelectedPromptModal = ({
     }
   };
 
-  const generateShareMessage = () => {
-    return `Check out this AI prompt: "${selectedPrompt.filename}" from The Prompt Collection`;
-  };
-
   // Generate the full sharing URL with prompt parameter
   const getShareUrl = () => {
     const url = new URL(window.location.origin);
@@ -76,6 +73,33 @@ const SelectedPromptModal = ({
       onStartConversation(selectedWebsite, selectedPrompt.content);
     } else {
       setSelectedAITool(null);
+    }
+  };
+
+  // New helper: Get the most frequent AI tool based on local usage stats, or choose randomly among those tied
+  const getMostFrequentTool = () => {
+    const stats = JSON.parse(localStorage.getItem('toolUsageStats')) || {};
+    const allTools = [...aiTools.tools, ...customTools];
+    let maxUsage = -1;
+    allTools.forEach(tool => {
+      const usage = stats[tool.name] || 0;
+      if (usage > maxUsage) {
+        maxUsage = usage;
+      }
+    });
+    // Gather all tools with usage equal to maxUsage
+    const candidates = allTools.filter(tool => (stats[tool.name] || 0) === maxUsage);
+    if (candidates.length === 0) return null;
+    // Randomly select one if there are multiple candidates
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    return candidates[randomIndex];
+  };
+
+  // New handler: Use the most frequent AI tool
+  const handleFrequentTool = () => {
+    const tool = getMostFrequentTool();
+    if (tool) {
+      onStartConversation(tool.name, selectedPrompt.content);
     }
   };
 
@@ -165,6 +189,14 @@ const SelectedPromptModal = ({
                 >
                   {isCopied ? <Check size={18} /> : <Copy size={18} />}
                   {isCopied ? 'Copied!' : 'Copy'}
+                </button>
+                {/* Updated button: Dynamically set the label with the selected AI tool's name */}
+                <button
+                  className="w-full sm:w-auto px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 flex items-center justify-center gap-2"
+                  onClick={handleFrequentTool}
+                >
+                  <Zap size={18} />
+                  {getMostFrequentTool() ? getMostFrequentTool().name : ''}
                 </button>
               </div>
             </div>

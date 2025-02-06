@@ -7,12 +7,14 @@ import PromptList from './components/PromptList/PromptList';
 import ReferencesSection from './components/ReferencesSection/ReferencesSection';
 import SelectedPromptModal from './components/SelectedPromptModal/SelectedPromptModal';
 import Footer from './components/Footer/Footer';
-import prompts from './prompts/prompts.json';
-import references from './references.json';
+import prompts from './data/prompts.json';
+import references from './data/references.json'; // Updated import path
 import axios from 'axios';
 import { load } from 'cheerio';
 import debounce from 'lodash.debounce';
 import aiTools from './data/ai-tools.json';
+import TopPrompts from './components/TopPrompts';
+import { loadCustomTools, saveCustomTools, loadPromptUsageStats, savePromptUsageStats, loadToolUsageStats, saveToolUsageStats } from './utils/localStorage';
 
 const PAGE_SIZE = 20; // Number of prompts to load at a time
 
@@ -26,29 +28,23 @@ const App = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const [referencesData, setReferencesData] = useState([]);
-  const [customTools, setCustomTools] = useState(() => {
-    // Initialize from localStorage on component mount
-    const saved = localStorage.getItem('customTools');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [customTools, setCustomTools] = useState(() => loadCustomTools());
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showHero, setShowHero] = useState(true);
 
   // New state: usageStats to track prompt usage counts (keyed by prompt filename)
-  const [usageStats, setUsageStats] = useState(() => {
-    const saved = localStorage.getItem('promptUsageStats');
-    return saved ? JSON.parse(saved) : {};
-  });
+  const [usageStats, setUsageStats] = useState(() => loadPromptUsageStats());
+  const [toolUsageStats, setToolUsageStats] = useState(() => loadToolUsageStats());
 
   // Load custom tools from localStorage on initial render
   useEffect(() => {
-    const storedTools = JSON.parse(localStorage.getItem('customTools')) || [];
+    const storedTools = loadCustomTools();
     setCustomTools(storedTools);
   }, []);
 
   // Save custom tools to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('customTools', JSON.stringify(customTools));
+    saveCustomTools(customTools);
   }, [customTools]);
 
   // Load usageStats from localStorage on mount (redundant with initialization if needed)
@@ -135,7 +131,6 @@ const App = () => {
   // Reset visible prompts when search or tags change
   useEffect(() => {
     const filtered = filterPrompts();
-    console.log(filtered);
     setVisiblePrompts(filtered.slice(0, PAGE_SIZE));
     setPage(1);
     setHasMore(filtered.length > PAGE_SIZE);
@@ -176,6 +171,16 @@ const App = () => {
 
   // Handle starting a conversation with a selected website
   const handleStartConversation = (website, promptContent) => {
+    // Update AI tool usage stat
+    setToolUsageStats((prevStats) => {
+      const newStats = {
+        ...prevStats,
+        [website]: (prevStats[website] || 0) + 1,
+      };
+      saveToolUsageStats(newStats);
+      return newStats;
+    });
+
     // Copy the system prompt to the clipboard
     navigator.clipboard.writeText(promptContent).then(() => {
       setIsCopied(true);
@@ -196,6 +201,44 @@ const App = () => {
     }
 
     window.open(url, '_blank');
+  };
+
+  // Add new handler for quick action
+  const handleQuickAction = (prompt) => {
+    // Determine the top AI tool (from aiTools and customTools)
+    const stats = JSON.parse(localStorage.getItem('toolUsageStats')) || {};
+    const allTools = [...aiTools.tools, ...customTools];
+    let maxUsage = -1;
+    allTools.forEach(tool => {
+      const usage = stats[tool.name] || 0;
+      if (usage > maxUsage) maxUsage = usage;
+    });
+    const candidates = allTools.filter(tool => (stats[tool.name] || 0) === maxUsage);
+    if (candidates.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    const topTool = candidates[randomIndex];
+
+    // Update tool usage stat
+    setToolUsageStats((prevStats) => {
+      const newStats = { ...prevStats, [topTool.name]: (prevStats[topTool.name] || 0) + 1 };
+      saveToolUsageStats(newStats);
+      return newStats;
+    });
+
+    // Copy the prompt content to clipboard and then open the tool's URL
+    navigator.clipboard.writeText(prompt.content).then(() => {
+      const predefinedTool = aiTools.tools.find(tool => tool.name === topTool.name);
+      const customTool = customTools.find(tool => tool.name === topTool.name);
+      let url = '';
+      if (predefinedTool) {
+        url = predefinedTool.url;
+      } else if (customTool) {
+        url = customTool.url;
+      }
+      if (url) {
+        window.open(url, '_blank');
+      }
+    });
   };
 
   // Fetch reference data using a CORS proxy
@@ -391,7 +434,7 @@ const App = () => {
         ...prevStats,
         [prompt.filename]: (prevStats[prompt.filename] || 0) + 1,
       };
-      localStorage.setItem('promptUsageStats', JSON.stringify(newStats));
+      savePromptUsageStats(newStats);
       return newStats;
     });
     setSelectedPrompt(prompt);
@@ -433,7 +476,7 @@ const App = () => {
             </div>
           )}
 
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-4xl mx-auto space-y-0">  {/* reduced spacing from space-y-1 to space-y-0 */}
             <TagFilter
               tags={visibleTags}
               selectedTags={selectedTags}
@@ -446,38 +489,19 @@ const App = () => {
               shareContent={getFilterShareContent()}
               shareTitle="Filtered Prompts - The Prompt Collection"
             />
-            {/* Updated Top 5 Frequent Prompts Section */}
-            {showHero && topPrompts.length > 0 && (
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  Top 5 Frequent Prompts
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {topPrompts.map((prompt) => (
-                    <div key={prompt.filename}
-                      className="p-4 border rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                      onClick={() => handleSelectPrompt(prompt)}>
-                      <div className="flex justify-between items-center">
-                        <span>{prompt.title || prompt.filename}</span>
-                        <span className="ml-2 text-xs font-semibold px-2 py-1 rounded bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100">
-                          {prompt.usageCount} uses
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* Extracted Top Prompts Section remains unchanged */}
+            {showHero && <TopPrompts topPrompts={topPrompts} handleSelectPrompt={handleSelectPrompt} />}
           </div>
         </div>
 
         {/* Prompts List with reduced margin when filters are active */}
-        <div className={`${(!showHero && (selectedCategory || selectedTags.length > 0)) ? 'mt-2' : 'mt-8'}`}>
+        <div className={`${(!showHero && (selectedCategory || selectedTags.length > 0)) ? 'mt-1' : 'mt-4'}`}>  {/* reduced margin above PromptList */}
           <PromptList
             prompts={visiblePrompts}
             loadMorePrompts={loadMorePrompts}
             hasMore={hasMore}
             onSelectPrompt={handleSelectPrompt}
+            onQuickAction={handleQuickAction} // pass quick action handler
             selectedCategory={selectedCategory}
             onCategoryClick={handleCategoryClick}
             onBackToCategories={handleBackToCategories}

@@ -1,11 +1,13 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import PromptItem from './PromptItem'; // New import
 
 const PromptList = ({
   prompts,
   loadMorePrompts,
   hasMore,
   onSelectPrompt,
+  onQuickAction, // add onQuickAction prop here
   selectedCategory,
   onCategoryClick,
   onBackToCategories,
@@ -67,46 +69,12 @@ const PromptList = ({
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
       >
         {prompts.map((prompt, index) => (
-          <div
+          <PromptItem
             key={index}
-            onClick={() => onSelectPrompt(prompt)}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] active:scale-95 cursor-pointer flex flex-col gap-3 h-full"
-          >
-            <div className="flex items-center justify-between">
-              {prompt.category && (
-                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs font-medium">
-                  {prompt.category}
-                </span>
-              )}
-              {prompt.isSystemPrompt && (
-                <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-xs font-medium">
-                  System Prompt
-                </span>
-              )}
-            </div>
-
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-1 dark:text-gray-100">
-                {prompt.title || prompt.filename || 'Untitled Prompt'}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 line-clamp-3 text-sm">
-                {prompt.description || prompt.content.substring(0, 150) + '...'}
-              </p>
-            </div>
-
-            {prompt.tags && prompt.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-auto pt-3">
-                {prompt.tags.map((tag, tagIndex) => (
-                  <span
-                    key={tagIndex}
-                    className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+            prompt={prompt}
+            onSelectPrompt={onSelectPrompt}
+            onQuickAction={onQuickAction} // now correctly defined
+          />
         ))}
       </InfiniteScroll>
     </div>
