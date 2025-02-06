@@ -12,8 +12,7 @@
     "tags": [
       "system",
       "accountant",
-      "french",
-      "accountant"
+      "french"
     ]
   },
   {
@@ -181,7 +180,6 @@
     "tags": [
       "system",
       "business",
-      "business",
       "idea",
       "analys"
     ]
@@ -199,7 +197,6 @@
     "filename": "system_business_idea_gpt.md",
     "tags": [
       "system",
-      "business",
       "business",
       "idea",
       "gpt"
@@ -360,7 +357,6 @@
     "filename": "system_children_song_writer.md",
     "tags": [
       "system",
-      "children",
       "children",
       "song",
       "writer"
@@ -640,7 +636,6 @@
     "tags": [
       "system",
       "expert",
-      "expert",
       "comptable",
       "et",
       "loi"
@@ -787,10 +782,21 @@
     ]
   },
   {
+    "id": "notebooklm-create_mermaid",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "Based on the provided resource, create a clear, step-by-step diagram to illustrate the process for [NAME_OF_THE_TUTORIAL].\nPlease generate the steps as a flowchart in Mermaid syntax. Ensure that:\n\n1. All major steps and sub-steps are included and arranged in the correct order.\n2. Sub-steps are shown as part of their respective main steps.\n3. The diagram is clear, logical, and easy to follow.\n4. Ensure the structure is visually clear, showing connections and relationships between ideas.\n5. Use Mermaid.js syntax in a code block, formatted as shown in the example below, to represent the mind map.\n\nUse the following structure for Mermaid syntax:\n\n- Main steps should be represented as distinct nodes.\n- Sub-steps should branch off from their respective main steps.\n- Use arrows to indicate the flow of actions from one step to the next.\n- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.\n\n<mermaidExample>\ngraph TD\n  Step1[Main Step 1] --> SubStep1A[Sub-step 1A]\n  Step1 --> SubStep1B[Sub-step 1B]\n  Step2[Main Step 2] --> SubStep2A[Sub-step 2A]\n  Step2 --> SubStep2B[Sub-step 2B]\n</mermaidExample>",
+    "isSystemPrompt": false,
+    "filename": "create_mermaid.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
     "id": "notebooklm-create_mindmap",
     "category": "notebooklm",
     "subcategories": [],
-    "content": "Create a hierarchical mind map using Markmap.js syntax to organize key points from the provided resources. Follow these steps:\n- Identify major themes as primary branches.\n- Break each theme into subtopics as secondary branches.\n- Ensure the structure is visually clear, showing connections and relationships between ideas.\n- Use Markmap.js syntax in a code block, formatted as shown in the example below, to represent the mind map.\n- Exclude citations or references, focusing solely on core ideas and their hierarchical relationships.\n- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.\n\n<MarkmapExample>\n\n# Title\n\n## Links\n\n- [Website](https://markmap.js.org/)\n- [GitHub](https://github.com/gera2ld/markmap)\n\n## Related Projects\n\n- [coc-markmap](https://github.com/gera2ld/coc-markmap) for Neovim\n- [markmap-vscode](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode) for VSCode\n- [eaf-markmap](https://github.com/emacs-eaf/eaf-markmap) for Emacs\n\n## Features\n\nNote that if blocks and lists appear at the same level, the lists will be ignored.\n\n### Lists\n\n- **strong** ~~del~~ *italic* ==highlight==\n- `inline code`\n- [x] checkbox\n- Katex: $x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$ <!-- markmap: fold -->\n  - [More Katex Examples](#?d=gist:af76a4c245b302206b16aec503dbe07b:katex.md)\n- Now we can wrap very very very very long text based on `maxWidth` option\n- Ordered list\n  1. item 1\n  2. item 2\n\n### Blocks\n\n```js\nconsole.log('hello, JavaScript')\n```\n\n| Products | Price |\n|-|-|\n| Apple | 4 |\n| Banana | 2 |\n\n![](https://markmap.js.org/favicon.png)\n</MarkmapExample>",
+    "content": "Create a hierarchical mind map using Markmap.js syntax to organize key points from the provided resources. Follow these steps:\n- Identify major themes as primary branches.\n- Break each theme into subtopics as secondary branches.\n- Ensure the structure is visually clear, showing connections and relationships between ideas.\n- Use Markmap.js syntax in a code block, formatted as shown in the example below, to represent the mind map.\n- Focusing solely on core ideas and their hierarchical relationships.\n- DO NOT USE ANY citations or references\n- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.\n\n<MarkmapExample>\n\n---\ntitle: markmap\nmarkmap:\n  colorFreezeLevel: 2\n  maxWidth: 300\n---\n\n# markmap\n\n## Links\n\n- [Website](https://markmap.js.org/)\n- [GitHub](https://github.com/gera2ld/markmap)\n\n## Related Projects\n\n- [coc-markmap](https://github.com/gera2ld/coc-markmap) for Neovim\n- [markmap-vscode](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode) for VSCode\n- [eaf-markmap](https://github.com/emacs-eaf/eaf-markmap) for Emacs\n\n## Features\n\nNote that if blocks and lists appear at the same level, the lists will be ignored.\n\n### Lists\n\n- **strong** ~~del~~ *italic* ==highlight==\n- `inline code`\n- [x] checkbox\n- Katex: $x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$ <!-- markmap: fold -->\n- [More Katex Examples](#?d=gist:af76a4c245b302206b16aec503dbe07b:katex.md)\n- Now we can wrap very very very very long text based on `maxWidth` option\n- Ordered list\n1. item 1\n2. item 2\n\n### Blocks\n\n```js\nconsole.log('hello, JavaScript')\n```\n\n| Products | Price |\n|-|-|\n| Apple | 4 |\n| Banana | 2 |\n\n![](https://markmap.js.org/favicon.png)\n</MarkmapExample>",
     "isSystemPrompt": false,
     "filename": "create_mindmap.md",
     "tags": [
@@ -801,9 +807,20 @@
     "id": "notebooklm-customize-podcast",
     "category": "notebooklm",
     "subcategories": [],
-    "content": "Begin the podcast with the greeting: 'Welcome to the AI Talk Podcast!'\nNext, introduce the hosts: L (male voice) and N (female voice).\nConclude the podcast by acknowledging and crediting all sources used.",
+    "content": "Begin the podcast with the greeting: 'Welcome to the Study Together Podcast! Today we will learn something new.'\nThen introduce the main topic of the podcast.\nThen introduce the host: Nicon Robin (female voice) - super sexy Podcast host with many excellent awards over the years.\nThen introduce the guest: Luffy (male voice) - an expert in the topic.\nThe guest should explain every concepts/ methods in detail as for a newbie.\nConclude the podcast by acknowledging and crediting all sources used.",
     "isSystemPrompt": false,
     "filename": "customize-podcast.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
+    "id": "notebooklm-extend_mindmap",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "Create another mindmap focusing on [sub-topic] - you can extend the knowledge with your own but do not use any citations, references",
+    "isSystemPrompt": false,
+    "filename": "extend_mindmap.md",
     "tags": [
       "notebooklm"
     ]
@@ -910,7 +927,6 @@
     "tags": [
       "system",
       "prompt-engineering",
-      "system",
       "prompt",
       "expert"
     ]
@@ -1082,8 +1098,7 @@
     "tags": [
       "system",
       "therapist",
-      "empathic",
-      "therapist"
+      "empathic"
     ]
   },
   {
@@ -1100,7 +1115,6 @@
     "tags": [
       "system",
       "writing",
-      "copywriting",
       "copywriting",
       "expert"
     ]
@@ -1150,7 +1164,6 @@
     "tags": [
       "system",
       "writing",
-      "grammar",
       "grammar",
       "checker"
     ]
@@ -1218,7 +1231,6 @@
     "filename": "system_writing_assistant.md",
     "tags": [
       "system",
-      "writing",
       "writing",
       "assistant"
     ]
