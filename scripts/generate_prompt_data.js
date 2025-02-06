@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const promptsDir = path.join(__dirname, '../prompts');
-const outputFilePath = path.join(__dirname, '../website/src/prompts/prompts.json');
+const outputFilePath = path.join(__dirname, '../website/src/data/prompts.json');
 const systemPromptPrefix = 'system_';
 
 function generatePromptData() {
@@ -39,10 +39,13 @@ function generatePromptData() {
         tags.push(category); // Add category as a tag
         tags.push(...subcategories); // Add all subcategories as tags
 
-        // Now `tags` will contain:
+        // Remove duplicated tags
+        const uniqueTags = [...new Set(tags)];
+
+        // Now `uniqueTags` will contain:
         // - 'system' (if it's a system prompt)
         // - The category
-        // - All subcategories (excluding the file name)
+        // - All subcategories (excluding the file name), with duplicates removed
 
         allPrompts.push({
           id: relativePath.replace(/\//g, '-').replace(/\.md$/, ''), // Unique ID
@@ -51,7 +54,7 @@ function generatePromptData() {
           content,
           isSystemPrompt,
           filename: file,
-          tags, // Add tags field
+          tags: uniqueTags, // Add uniqueTags field
         });
       }
     });
