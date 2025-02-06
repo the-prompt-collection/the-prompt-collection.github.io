@@ -34,6 +34,12 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showHero, setShowHero] = useState(true);
 
+  // New state: usageStats to track prompt usage counts (keyed by prompt filename)
+  const [usageStats, setUsageStats] = useState(() => {
+    const saved = localStorage.getItem('promptUsageStats');
+    return saved ? JSON.parse(saved) : {};
+  });
+
   // Load custom tools from localStorage on initial render
   useEffect(() => {
     const storedTools = JSON.parse(localStorage.getItem('customTools')) || [];
@@ -44,6 +50,14 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('customTools', JSON.stringify(customTools));
   }, [customTools]);
+
+  // Load usageStats from localStorage on mount (redundant with initialization if needed)
+  useEffect(() => {
+    const storedStats = localStorage.getItem('promptUsageStats');
+    if (storedStats) {
+      setUsageStats(JSON.parse(storedStats));
+    }
+  }, []);
 
   // Extract all unique tags from prompts
   const allTags = [...new Set(prompts.flatMap((prompt) => prompt.tags || []))];
@@ -370,6 +384,29 @@ const App = () => {
     return filterPrompts().length;
   }, [selectedCategory, filterPrompts, groupedPrompts]);
 
+  // Helper function that increments the count of a prompt and updates localStorage
+  const handleSelectPrompt = (prompt) => {
+    setUsageStats((prevStats) => {
+      const newStats = {
+        ...prevStats,
+        [prompt.filename]: (prevStats[prompt.filename] || 0) + 1,
+      };
+      localStorage.setItem('promptUsageStats', JSON.stringify(newStats));
+      return newStats;
+    });
+    setSelectedPrompt(prompt);
+  };
+
+  // Compute top 5 frequently used prompts from usageStats
+  const topPrompts = Object.entries(usageStats)
+    .sort(([, countA], [, countB]) => countB - countA)
+    .slice(0, 5)
+    .map(([filename, count]) => {
+      const prompt = prompts.find(p => p.filename === filename);
+      return prompt ? { ...prompt, usageCount: count } : null;
+    })
+    .filter(prompt => prompt);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto p-4">
@@ -409,6 +446,28 @@ const App = () => {
               shareContent={getFilterShareContent()}
               shareTitle="Filtered Prompts - The Prompt Collection"
             />
+            {/* Updated Top 5 Frequent Prompts Section */}
+            {showHero && topPrompts.length > 0 && (
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Top 5 Frequent Prompts
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {topPrompts.map((prompt) => (
+                    <div key={prompt.filename}
+                      className="p-4 border rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                      onClick={() => handleSelectPrompt(prompt)}>
+                      <div className="flex justify-between items-center">
+                        <span>{prompt.title || prompt.filename}</span>
+                        <span className="ml-2 text-xs font-semibold px-2 py-1 rounded bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+                          {prompt.usageCount} uses
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
 
@@ -418,7 +477,7 @@ const App = () => {
             prompts={visiblePrompts}
             loadMorePrompts={loadMorePrompts}
             hasMore={hasMore}
-            onSelectPrompt={setSelectedPrompt}
+            onSelectPrompt={handleSelectPrompt}
             selectedCategory={selectedCategory}
             onCategoryClick={handleCategoryClick}
             onBackToCategories={handleBackToCategories}
