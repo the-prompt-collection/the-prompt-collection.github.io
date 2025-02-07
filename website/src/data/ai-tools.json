@@ -29,6 +29,12 @@
       "url": "https://www.perplexity.ai",
       "logo": "https://www.perplexity.ai/favicon.ico",
       "description": "Perplexity AI - Real-time information synthesis and analysis"
+    },
+    {
+      "name": "Le Chat",
+      "url": "https://chat.mistral.ai",
+      "logo": "https://chat.mistral.ai/favicon.ico",
+      "description": "Mistral AI's Le Chat - French-based conversational AI model"
     }
   ]
 }
