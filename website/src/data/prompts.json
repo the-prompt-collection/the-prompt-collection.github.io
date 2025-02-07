@@ -782,67 +782,56 @@
     ]
   },
   {
-    "id": "notebooklm-create_mermaid",
+    "id": "notebooklm-podcast_article_blogpost",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "- Begin the podcast with: 'Welcome to the AI Talk Podcast!'\n- Introduce hosts: Sheldon (male) and Amy (female)\n- Key focus areas:\n  - Present main points clearly, avoid jargon\n  - Add personal stories and opinions to engage listeners\n  - Provide deep analysis and explore multiple perspectives\n  - Share practical applications and real-world solutions\n- Do not mention/reveal personal information\n- Conclude by acknowledging and crediting all sources used",
+    "isSystemPrompt": false,
+    "filename": "podcast_article_blogpost.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
+    "id": "notebooklm-podcast_scientific_paper",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "- Begin the podcast with: 'Welcome to the AI Talk Podcast!'\n- Introduce yourself as Sheldon (male) and Amy (female)\n- Key focus areas:\n  - Present main points clearly, avoid jargon\n  - Focus on the main results and their significance.\n  - Explain why the study matters and its real-world implications.\n  - Discuss strengths, limitations, and unanswered questions.\n  - Relate the topic to everyday life or current events to maintain interest\n- Conclude by acknowledging and crediting all sources used",
+    "isSystemPrompt": false,
+    "filename": "podcast_scientific_paper.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
+    "id": "notebooklm-sources_to_mindmap",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "You are an expert in document analysis and structured visualization. Your task is to:\n-Analyze the provided document and extract its core content:\n\t- Identify key topics, subtopics, and important details.\n\t- Organize the content hierarchically in a clear and concise manner.\n-Convert the extracted information into a mind map using Markmap syntax:\n\t- Use the document’s central theme as the main topic.\n\t- Represent major sections, ideas, or concepts as subtopics.\n\t- Include supporting details, explanations, or examples as further branches.\n-Ensure the final output follows valid Markmap Markdown syntax and is well-structured for clarity:\n\t- DO NOT include citations or references.\n\t- Use minimum number of tabs, spaces but still maintain hiarachy\n\n<MarkmapExample>\n---\ntitle: markmap\nmarkmap:\n  colorFreezeLevel: 2\n  maxWidth: 300\n---\n# Project Overview\n## Phase 1: Research\n### Objectives\n- Define scope\n- Identify requirements\n### Resources\n- Team assignments\n- Budget allocation\n## Phase 2: Development\n### Backend\n- API design\n- Database schema\n### Frontend\n- UI/UX design\n- Component structure\n## Phase 3: Testing & Deployment\n### Testing\n- Unit tests\n- Integration tests\n### Deployment\n- Cloud setup\n- Release management\n</MarkmapExample>\n\nProvide the final Markmap Markdown output in a code block so it can be directly rendered in Markmap",
+    "isSystemPrompt": false,
+    "filename": "sources_to_mindmap.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
+    "id": "notebooklm-sub_topic_extend_mindmap",
+    "category": "notebooklm",
+    "subcategories": [],
+    "content": "Create a new mind map focused on [sub-topic]. You may expand on the topic using your own knowledge, but do not include any citations or references.",
+    "isSystemPrompt": false,
+    "filename": "sub_topic_extend_mindmap.md",
+    "tags": [
+      "notebooklm"
+    ]
+  },
+  {
+    "id": "notebooklm-tutorial_to_mermaid",
     "category": "notebooklm",
     "subcategories": [],
     "content": "Based on the provided resource, create a clear, step-by-step diagram to illustrate the process for [NAME_OF_THE_TUTORIAL].\nPlease generate the steps as a flowchart in Mermaid syntax. Ensure that:\n\n1. All major steps and sub-steps are included and arranged in the correct order.\n2. Sub-steps are shown as part of their respective main steps.\n3. The diagram is clear, logical, and easy to follow.\n4. Ensure the structure is visually clear, showing connections and relationships between ideas.\n5. Use Mermaid.js syntax in a code block, formatted as shown in the example below, to represent the mind map.\n\nUse the following structure for Mermaid syntax:\n\n- Main steps should be represented as distinct nodes.\n- Sub-steps should branch off from their respective main steps.\n- Use arrows to indicate the flow of actions from one step to the next.\n- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.\n\n<mermaidExample>\ngraph TD\n  Step1[Main Step 1] --> SubStep1A[Sub-step 1A]\n  Step1 --> SubStep1B[Sub-step 1B]\n  Step2[Main Step 2] --> SubStep2A[Sub-step 2A]\n  Step2 --> SubStep2B[Sub-step 2B]\n</mermaidExample>",
     "isSystemPrompt": false,
-    "filename": "create_mermaid.md",
-    "tags": [
-      "notebooklm"
-    ]
-  },
-  {
-    "id": "notebooklm-create_mindmap",
-    "category": "notebooklm",
-    "subcategories": [],
-    "content": "Create a hierarchical mind map using Markmap.js syntax to organize key points from the provided resources. Follow these steps:\n- Identify major themes as primary branches.\n- Break each theme into subtopics as secondary branches.\n- Ensure the structure is visually clear, showing connections and relationships between ideas.\n- Use Markmap.js syntax in a code block, formatted as shown in the example below, to represent the mind map.\n- Focusing solely on core ideas and their hierarchical relationships.\n- DO NOT USE ANY citations or references\n- RETURN ONLY a mind map in Markmap.js syntax without any additional text or explanations.\n\n<MarkmapExample>\n\n---\ntitle: markmap\nmarkmap:\n  colorFreezeLevel: 2\n  maxWidth: 300\n---\n\n# markmap\n\n## Links\n\n- [Website](https://markmap.js.org/)\n- [GitHub](https://github.com/gera2ld/markmap)\n\n## Related Projects\n\n- [coc-markmap](https://github.com/gera2ld/coc-markmap) for Neovim\n- [markmap-vscode](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode) for VSCode\n- [eaf-markmap](https://github.com/emacs-eaf/eaf-markmap) for Emacs\n\n## Features\n\nNote that if blocks and lists appear at the same level, the lists will be ignored.\n\n### Lists\n\n- **strong** ~~del~~ *italic* ==highlight==\n- `inline code`\n- [x] checkbox\n- Katex: $x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$ <!-- markmap: fold -->\n- [More Katex Examples](#?d=gist:af76a4c245b302206b16aec503dbe07b:katex.md)\n- Now we can wrap very very very very long text based on `maxWidth` option\n- Ordered list\n1. item 1\n2. item 2\n\n### Blocks\n\n```js\nconsole.log('hello, JavaScript')\n```\n\n| Products | Price |\n|-|-|\n| Apple | 4 |\n| Banana | 2 |\n\n![](https://markmap.js.org/favicon.png)\n</MarkmapExample>",
-    "isSystemPrompt": false,
-    "filename": "create_mindmap.md",
-    "tags": [
-      "notebooklm"
-    ]
-  },
-  {
-    "id": "notebooklm-customize-podcast",
-    "category": "notebooklm",
-    "subcategories": [],
-    "content": "Begin the podcast with the greeting: 'Welcome to the Study Together Podcast! Today we will learn something new.'\nThen introduce the main topic of the podcast.\nThen introduce the host: Nicon Robin (female voice) - super sexy Podcast host with many excellent awards over the years.\nThen introduce the guest: Luffy (male voice) - an expert in the topic.\nThe guest should explain every concepts/ methods in detail as for a newbie.\nConclude the podcast by acknowledging and crediting all sources used.",
-    "isSystemPrompt": false,
-    "filename": "customize-podcast.md",
-    "tags": [
-      "notebooklm"
-    ]
-  },
-  {
-    "id": "notebooklm-extend_mindmap",
-    "category": "notebooklm",
-    "subcategories": [],
-    "content": "Create another mindmap focusing on [sub-topic] - you can extend the knowledge with your own but do not use any citations, references",
-    "isSystemPrompt": false,
-    "filename": "extend_mindmap.md",
-    "tags": [
-      "notebooklm"
-    ]
-  },
-  {
-    "id": "notebooklm-paper_to_markmap",
-    "category": "notebooklm",
-    "subcategories": [],
-    "content": "Create a mind map that captures and organizes the key points from provided resources in a hierarchical structure. Focus on the following key points:\n- Provide an overview of existing knowledge and research in the field prior to this study.\n- Describe the research methods and approaches used in detail.\n- Highlight the novel insights, findings, or advancements presented in the paper.\n- Summarize the experiments conducted and the results obtained.\n- Analyze how this study compares to existing research and suggest potential directions for future exploration.\nThen break each theme down into subtopics. The goal is to make the mind map visually clear, showing how these ideas connect and relate to one another.\nUse Markmap.js syntax in a code block (similar to the provided example) to represent the mind map. Include branches for each main theme and its subtopics. Avoid any direct references to citations, ensuring the final mind map remains focused on core ideas and points.\n<MarkmapExample>\n\n# Title\n\n## Links\n\n- [Website](https://markmap.js.org/)\n- [GitHub](https://github.com/gera2ld/markmap)\n\n## Related Projects\n\n- [coc-markmap](https://github.com/gera2ld/coc-markmap) for Neovim\n- [markmap-vscode](https://marketplace.visualstudio.com/items?itemName=gera2ld.markmap-vscode) for VSCode\n- [eaf-markmap](https://github.com/emacs-eaf/eaf-markmap) for Emacs\n\n## Features\n\nNote that if blocks and lists appear at the same level, the lists will be ignored.\n\n### Lists\n\n- **strong** ~~del~~ *italic* ==highlight==\n- `inline code`\n- [x] checkbox\n- Katex: $x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$ <!-- markmap: fold -->\n  - [More Katex Examples](#?d=gist:af76a4c245b302206b16aec503dbe07b:katex.md)\n- Now we can wrap very very very very long text based on `maxWidth` option\n- Ordered list\n  1. item 1\n  2. item 2\n\n### Blocks\n\n```js\nconsole.log('hello, JavaScript')\n```\n\n| Products | Price |\n|-|-|\n| Apple | 4 |\n| Banana | 2 |\n\n![](https://markmap.js.org/favicon.png)\n</MarkmapExample>",
-    "isSystemPrompt": false,
-    "filename": "paper_to_markmap.md",
-    "tags": [
-      "notebooklm"
-    ]
-  },
-  {
-    "id": "notebooklm-paper_to_podcast",
-    "category": "notebooklm",
-    "subcategories": [],
-    "content": "- Provide an overview of existing knowledge and research in the field prior to this study.\n- Describe the research methods and approaches used in detail.\n- Highlight the novel insights, findings, or advancements presented in the paper.\n- Summarize the experiments conducted and the results obtained.\n- Analyze how this study compares to existing research and suggest potential directions for future exploration.",
-    "isSystemPrompt": false,
-    "filename": "paper_to_podcast.md",
+    "filename": "tutorial_to_mermaid.md",
     "tags": [
       "notebooklm"
     ]
@@ -976,6 +965,21 @@
       "software-development",
       "kanban",
       "osbidien"
+    ]
+  },
+  {
+    "id": "software-development-system_mermaid-gant-chart",
+    "category": "software-development",
+    "subcategories": [
+      "mermaid-gant-chart"
+    ],
+    "content": "You are an expert in document analysis and project management visualization. Your task is to:\n1.\tAnalyze the provided document and extract all relevant timelines and milestones.\n-\tIdentify key dates, durations, dependencies, and task descriptions.\n-\tDifferentiate between tasks, subtasks, and major milestones.\n2.\tConvert the extracted timeline data into a Gantt chart in MermaidJS syntax.\n-\tFormat tasks with appropriate start and end dates (or estimated durations).\n-\tUse hierarchical structures if applicable (e.g., subtasks under main tasks).\n-\tInclude milestones as milestone entries in the chart.\n-\tDefine dependencies between tasks using after syntax where possible.\n3.\tEnsure the final output follows valid MermaidJS syntax and is structured for readability.\n\nExample Output (MermaidJS Gantt Chart):\n```mermaid\ngantt\n    title Project Timeline\n    dateFormat MMM YYYY\n    axisFormat MMM YYYY\n    section WP1: Manufacturing Pilots\n        T1.1 - Detailed scenario and test specifications :2024-01-01, 2027-12-31\n        T1.2 - Pilots set-up :2024-06-01, 2025-02-28\n```\nProvide the final Gantt chart as a code block so it can be directly rendered in MermaidJS.",
+    "isSystemPrompt": true,
+    "filename": "system_mermaid-gant-chart.md",
+    "tags": [
+      "system",
+      "software-development",
+      "mermaid-gant-chart"
     ]
   },
   {

@@ -1,0 +1,1 @@
+Create a new mind map focused on [sub-topic]. You may expand on the topic using your own knowledge, but do not include any citations or references.

@@ -69,11 +69,11 @@ export const saveDarkMode = (isDarkMode) => {
 // Function to load all stored state
 export const loadStoredState = () => {
   return {
-    customTools: loadCustomTools(),
-    promptUsageStats: loadPromptUsageStats(),
-    toolUsageStats: loadToolUsageStats(),
-    favoritePrompts: loadFavoritePrompts(),
-    darkMode: loadDarkMode(),
+    darkMode: localStorage.getItem('darkMode') !== 'false', // Default to true if not set
+    customTools: JSON.parse(localStorage.getItem('customTools') || '[]'),
+    promptUsageStats: JSON.parse(localStorage.getItem('promptUsageStats') || '{}'),
+    toolUsageStats: JSON.parse(localStorage.getItem('toolUsageStats') || '{}'),
+    favoritePrompts: JSON.parse(localStorage.getItem('favoritePrompts') || '[]'),
   };
 };
 
@@ -90,4 +90,15 @@ export const getMostFrequentTool = (tools) => {
   if (candidates.length === 0) return null;
   const randomIndex = Math.floor(Math.random() * candidates.length);
   return candidates[randomIndex];
+};
+
+export const getModalUsageCount = () => {
+  const count = parseInt(localStorage.getItem('modalUsageCount') || '0');
+  return count;
+};
+
+export const incrementModalUsageCount = () => {
+  const count = getModalUsageCount();
+  localStorage.setItem('modalUsageCount', (count + 1).toString());
+  return count + 1;
 };

@@ -1,1 +1,0 @@
-Create another mindmap focusing on [sub-topic] - you can extend the knowledge with your own but do not use any citations, references
