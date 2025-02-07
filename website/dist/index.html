@@ -13,10 +13,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Prompt Collection</title>
-    <script type="module" crossorigin src="/assets/index-BrWcPPX1.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-D7B1-rgo.css">
+    <script type="module" crossorigin src="/assets/index-t0OEc7-o.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-e3XlNDpd.css">
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Check for dark mode preference on load
+      if (localStorage.getItem('darkMode') === 'true' ||
+          (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </body>
 </html>

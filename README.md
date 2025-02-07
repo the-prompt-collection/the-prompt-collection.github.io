@@ -1,5 +1,7 @@
 # The Prompt Collection
+
 ![Logo](./logo.jpg)
+
 **The Prompt Collection** is a curated repository of diverse prompts designed for various purposes, such as writing, interviews, and more. Each category and subcategory includes a set of prompts along with corresponding system prompts to provide context and enhance relevance.
 
 This project is hosted at [the-prompt-collection.github.io](https://the-prompt-collection.github.io), where users can browse, search, and interact with prompts in a user-friendly interface.
@@ -7,12 +9,17 @@ This project is hosted at [the-prompt-collection.github.io](https://the-prompt-c
 ---
 
 ## Features
-- **Organized Structure**: Prompts are categorized and tagged into logical groups (e.g., Writing, Interviews) and subcategories (e.g., Fiction, Non-Fiction) for easy navigation.
-- **System Prompts**: Each category includes system prompts prefixed with `system_` to define personas and scenarios.
-- **Search Functionality**: Quickly find prompts by category, subcategory, or keywords.
-- **Custom Tools**: Users can define their own AI tools and integrate them seamlessly into the app.
-- **Quick Start**: Start conversations on popular AI platforms like ChatGPT, Gemini, DeepSeek, and more with a single click.
-- **Privacy**: There is no backend server. User information is stored locally in the browser cache.
+- **Organized Structure**: Prompts are categorized and tagged for easy navigation
+- **System Prompts**: Pre-configured context setters for different use cases
+- **Search Functionality**: Advanced search with filters and tags
+- **Custom Tools**: Create and manage your own AI tools
+- **Quick Start**: One-click conversation starters for popular AI platforms
+- **Privacy**: Local-first approach with browser storage
+- **Dark Mode**: Toggle between light and dark themes
+- **Favorites**: Bookmark frequently used prompts
+- **Analytics**: Track your prompt usage patterns
+- **Offline Support**: Access prompts without internet connection
+- **Quick AI Selection**: Dropdown-driven AI tool selector for streamlined conversations
 
 ---
 
@@ -31,11 +38,7 @@ This project is hosted at [the-prompt-collection.github.io](https://the-prompt-c
    - Modify the prompt directly on the website and copy the updated text using the "Copy" button.
 
 4. **Custom Tools**:
-   - Add, modify, or delete custom AI tools to integrate with the app.
-   - Use the dropdown menu to select a custom tool and start a conversation.
-
-5. **References Section**:
-   - Access external resources to learn more about prompt engineering.
+   - Add, modify, or delete custom AI tools
 
 ---
 
