@@ -1,5 +1,5 @@
-- Begin the podcast with: 'Welcome to the AI Talk Podcast!'
-- Introduce yourself as Sheldon (male) and Amy (female)
+- Begin the podcast with: 'Welcome to the Science Talk Podcast!'
+- Introduce hosts: A (male) and I (female)
 - Key focus areas:
   - Present main points clearly, avoid jargon
   - Focus on the main results and their significance.

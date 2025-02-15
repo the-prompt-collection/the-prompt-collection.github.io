@@ -1,11 +1,11 @@
 Based on the provided resource, create a clear, step-by-step diagram to illustrate the process for [NAME_OF_THE_TUTORIAL].
-Please generate the steps as a flowchart in Mermaid syntax. Ensure that:
 
-1. All major steps and sub-steps are included and arranged in the correct order.
-2. Sub-steps are shown as part of their respective main steps.
-3. The diagram is clear, logical, and easy to follow.
-4. Ensure the structure is visually clear, showing connections and relationships between ideas.
-5. Use Mermaid.js syntax in a code block, formatted as shown in the example below, to represent the mind map.
+Please generate the steps as a flowchart in Mermaid syntax. Ensure that:
+- All major steps and sub-steps are included and arranged in the correct order.
+- Sub-steps are shown as part of their respective main steps.
+- The diagram is clear, logical, and easy to follow.
+- Ensure the structure is visually clear, showing connections and relationships between ideas.
+- Use Mermaid.js syntax in a code block, formatted as shown in the example below, to represent the mind map.
 
 Use the following structure for Mermaid syntax:
 

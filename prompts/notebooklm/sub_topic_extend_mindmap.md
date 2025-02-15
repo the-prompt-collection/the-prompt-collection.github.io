@@ -1,1 +1,1 @@
-Create a new mind map focused on [sub-topic]. You may expand on the topic using your own knowledge, but do not include any citations or references.
+Generate a comprehensive mind map that explores the various facets of [sub-topic]. Organize the map to show the relationships between key concepts and subtopics. Exclude all citations and references.

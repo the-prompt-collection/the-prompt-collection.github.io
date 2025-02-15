@@ -1,5 +1,5 @@
 - Begin the podcast with: 'Welcome to the AI Talk Podcast!'
-- Introduce hosts: Sheldon (male) and Amy (female)
+- Introduce hosts: A (male) and I (female)
 - Key focus areas:
   - Present main points clearly, avoid jargon
   - Add personal stories and opinions to engage listeners
